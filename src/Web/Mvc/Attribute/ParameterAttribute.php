@@ -58,12 +58,12 @@ class ParameterAttribute extends Attribute
 
     public function isGet()
     {
-        return self::METHOD_GET === $this->method;
+        return self::METHOD_GET === strtolower($this->method);
     }
 
     public function isPost()
     {
-        return self::METHOD_POST === $this->method;
+        return self::METHOD_POST === strtolower($this->method);
     }
 
     public static function get(AttributeCollection $attributeCollection, $name)
