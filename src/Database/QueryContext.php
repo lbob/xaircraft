@@ -55,7 +55,12 @@ class QueryContext
 
         $count = $this->fieldExistsCountInSchemas($field, $prefix, $isSubQueryField);
         if (0 === $count) {
-            throw new QueryException("Field [$field] not exists in any schema.");
+            $tables = array();
+            foreach ($schemas as $item) {
+                $tables[] = $item->getName();
+            }
+
+            throw new QueryException("Field [$field] not exists in any schema. [" . implode(',', $tables) . "]");
         }
         if (1 < $count) {
             throw new QueryException("Field [$field] ambiguous.");

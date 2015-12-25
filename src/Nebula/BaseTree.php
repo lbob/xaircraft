@@ -93,6 +93,9 @@ trait BaseTree
         $detail = DB::table($model->getSchema()->getName())
             ->where('id', $this->$parentField)->select()
             ->detail()->execute();
-        return $model->load($detail);
+        if (isset($detail)) {
+            return $model->load($detail);
+        }
+        return null;
     }
 }
