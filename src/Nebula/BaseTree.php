@@ -91,7 +91,7 @@ trait BaseTree
 
         $parentField = $this->getParentIDField();
         $detail = DB::table($model->getSchema()->getName())
-            ->where($this->getParentIDField(), $this->$parentField)->select()
+            ->where('id', $this->$parentField)->select()
             ->detail()->execute();
         return $model->load($detail);
     }
