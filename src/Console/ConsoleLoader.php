@@ -44,9 +44,6 @@ class ConsoleLoader extends AppModule
         Command::bind('daemon', DaemonCommand::class);
         Command::bind('service', ServiceCommand::class);
 
-        Daemon::bind('idle', IdleDaemon::class);
-        Daemon::bind('schedule', ScheduleDaemon::class);
-
         Settings::load('commands');
         Settings::load('daemons');
 
