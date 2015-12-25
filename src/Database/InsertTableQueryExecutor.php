@@ -72,7 +72,7 @@ class InsertTableQueryExecutor extends TableQueryExecutor
                 throw new FieldValidateException(
                     $this->schema->getSymbol(),
                     $item,
-                    "Field [$item] can't be null."
+                    "Field [$item] can't be null in table [" . $this->schema->getSymbol() . "]."
                 );
             }
         }

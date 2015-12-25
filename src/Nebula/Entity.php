@@ -114,7 +114,7 @@ class Entity
             throw new EntityException("Can't find field [$field] in table [" . $this->schema->getName());
         }
 
-        if ($value != $this->shadows[$field]) {
+        if ($value !== $this->shadows[$field]) {
             if ($this->autoIncrementField === $field) {
                 if (!$this->exists) {
                     if (DB::table($this->schema->getName())->where($field, $value)->count()->execute() > 0) {

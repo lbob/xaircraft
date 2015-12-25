@@ -33,23 +33,25 @@ class Process
 
     public static function fork($target)
     {
-        if (!is_callable($target) && !$target instanceof Runnable) {
-            throw new ConsoleException("Must be callable or Runnable.");
+        if (!is_callable($target) && !$target instanceof Worker) {
+            throw new ConsoleException("Must be callable or Worker.");
         }
 
         $pid = pcntl_fork();
 
         if (0 === $pid) {
             try {
-                if ($target instanceof Runnable) {
-                    $result = $target->run();
+                if ($target instanceof Worker) {
+                    if (false !== $target->beforeStart()) {
+                        $target->handle();
+                    }
                 } else {
-                    $result = call_user_func($target);
+                    call_user_func($target);
                 }
             } catch (\Exception $ex) {
                 throw new ConsoleException($ex->getMessage(), $ex);
             }
-            App::end($result);
+            App::end();
         }
         if (0 > $pid) {
             throw new ConsoleException("Process start failure.");
@@ -57,5 +59,14 @@ class Process
 
         $process = new Process($pid);
         return $process;
+    }
+
+    public static function registerSignalHandler($closure, array $signals)
+    {
+        if (!empty($signals)) {
+            foreach ($signals as $item) {
+                pcntl_signal($item, $closure, false);
+            }
+        }
     }
 }

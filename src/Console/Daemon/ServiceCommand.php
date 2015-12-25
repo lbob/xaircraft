@@ -32,23 +32,6 @@ class ServiceCommand extends Command
 
     private function showAllDaemon()
     {
-        $messageQueueKey = ftok(App::path('cache') . "/queue/daemon.queue", "a");
-        $messageQueue = msg_get_queue($messageQueueKey, 0666);
 
-        $messageQueueState = msg_stat_queue($messageQueue);
-        $msgCount = $messageQueueState['msg_qnum'];
-
-        if (0 === $msgCount) {
-            Console::line("None service is running.");
-        }
-
-        while ($msgCount > 0) {
-            /** @var MessageQueue $message */
-            msg_receive($messageQueue, 0, $messageType, 1024, $message, true, MSG_IPC_NOWAIT);
-            Console::line("PID:$message->pid,NAME:$message->name,TIME:" . date("Y-m-d H:i:s", $message->timestamp) . "Alive.");
-
-            $messageQueueState = msg_stat_queue($messageQueue);
-            $msgCount = $messageQueueState['msg_qnum'];
-        };
     }
 }

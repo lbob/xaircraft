@@ -55,9 +55,14 @@ class home_controller extends Controller
      */
     public function test_model()
     {
+        $value = 0;
+        var_dump($value == null);
         /** @var User $user */
         $user = \Account\User::model();
         $user->name = "3";
+        $user->password = "asdf";
+        $user->level = "normal";
+        var_dump($user);
         $user->save();
 
         var_dump($user->isModified("name"));

@@ -5,6 +5,7 @@ use Xaircraft\App;
 use Xaircraft\Console\Command;
 use Xaircraft\Console\Console;
 use Xaircraft\Console\IPC\MessageQueue;
+use Xaircraft\Console\Process;
 use Xaircraft\Exception\ConsoleException;
 use Xaircraft\Exception\DaemonException;
 use Xaircraft\Globals;
@@ -24,8 +25,6 @@ class DaemonCommand extends Command
             throw new ConsoleException("Only run in command line mode");
         }
 
-        //加载Worker并为每个Worker创建一个子进程，然后进入休眠，当接收到信号量时，则执行相应的进程调度操作。
-
         if (!function_exists("pcntl_signal")) {
             throw new ConsoleException("PHP does not appear to be compiled with the PCNTL extension.This is neccesary for daemonization");
         }
@@ -33,20 +32,28 @@ class DaemonCommand extends Command
             gc_enable();
         }
 
-        $daemon = Daemon::make($_SERVER['argc'], $_SERVER['argv']);
-
-        try {
-            /**
-             * @var $daemon Daemon
-             */
-            if (isset($daemon)) {
-                $daemon->start();
-                sleep(1);
-                Console::line("Daemon [" . $daemon->getPID() . "] started.");
+        Process::registerSignalHandler(function ($signal) {
+            switch ($signal) {
+                case SIGUSR1:
+                    Console::line("SIGUSR1");
+                    break;
+                case SIGCHLD:
+                    Console::line("SIGCHLD");
+                    while (($pid = pcntl_waitpid(-1, $status, WNOHANG)) > 0) {
+                        Console::line("SIGCHLD...");
+                    }
+                    break;
+                case SIGTERM:
+                case SIGHUP:
+                case SIGQUIT:
+                    Console::line("Exit...");
             }
-        } catch (\Exception $ex) {
-            throw new DaemonException($daemon->getName(), $ex->getMessage(), $ex);
-        }
+
+        }, array(SIGTERM, SIGINT, SIGQUIT));
+
+        Process::fork(new HelloWorker());
+
+        Console::line("Exit.");
     }
 }
 

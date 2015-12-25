@@ -83,4 +83,16 @@ trait BaseTree
     }
 
     public abstract function getParentIDField();
+
+    public function parent()
+    {
+        /** @var Model $model */
+        $model = DI::get(__CLASS__);
+
+        $parentField = $this->getParentIDField();
+        $detail = DB::table($model->getSchema()->getName())
+            ->where($this->getParentIDField(), $this->$parentField)->select()
+            ->detail()->execute();
+        return $model->load($detail);
+    }
 }
