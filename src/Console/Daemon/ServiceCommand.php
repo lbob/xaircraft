@@ -32,6 +32,20 @@ class ServiceCommand extends Command
 
     private function showAllDaemon()
     {
-
+        $status = DaemonStatus::parse();
+        if (!empty($status)) {
+            /** @var DaemonStatus $item */
+            foreach ($status as $item) {
+                $pid = $item->getPid();
+                $name = $item->getName();
+                $status = $item->getStatus();
+                $state = $status['State'];
+                $stateDescription = $status['State_Description'];
+                $vmSize = $status['Current_Virtual_Memory_Size'];
+                Console::line("PID=$pid,Name=$name,State=$state($stateDescription),VmSize=$vmSize kB");
+            }
+        } else {
+            Console::line('No daemons running.');
+        }
     }
 }

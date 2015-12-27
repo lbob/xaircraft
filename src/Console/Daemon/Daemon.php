@@ -11,6 +11,7 @@ namespace Xaircraft\Console\Daemon;
 
 use Xaircraft\App;
 use Xaircraft\Core\IO\File;
+use Xaircraft\Core\Strings;
 use Xaircraft\Exception\DaemonException;
 
 abstract class Daemon
@@ -18,11 +19,13 @@ abstract class Daemon
     private $started = false;
     protected $singleton = true;
     protected $args;
+    protected $folder;
 
     public function __construct(array $args)
     {
         $this->pidFilePath = App::path('runtime') . '/daemon/' . get_called_class() . '.pid';
         $this->args = $args;
+        $this->folder = App::path('cache') . '/daemon/' . Strings::camelToSnake(str_replace('\\', '_', get_called_class()));
 
         $this->initialize();
     }
@@ -90,6 +93,12 @@ abstract class Daemon
             }
         }
         throw new DaemonException($this->getName(), "The daemon process end abnormally.");
+    }
+
+    protected function log($key, $message)
+    {
+        $path = $this->folder . '/log/' . date("Ymd", time()) . '.log';
+        File::appendText($path, "[" . date("Y-m-d H:i:s", time()) . "] PID=" . $this->getPid() . " $key \r\n\r\n$message\r\n\r\n\r\n\r\n");
     }
 
     private function checkPidFile()
