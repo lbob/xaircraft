@@ -9,21 +9,18 @@
 namespace Xaircraft\Console\Daemon;
 
 
-use Xaircraft\App;
-use Xaircraft\Console\IPC\MessageQueue;
-use Xaircraft\Core\IO\File;
 
 class IdleDaemon extends Daemon
 {
 
     public function handle()
     {
-
+        sleep(3);
     }
 
     public function beforeStart()
     {
-        // TODO: Implement beforeStart() method.
+
     }
 
     public function beforeStop()
