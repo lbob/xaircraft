@@ -61,6 +61,9 @@ abstract class Daemon
                 $stdout = fopen("/dev/null", "a");
                 $stderr = fopen("/dev/null", "a");
 
+                pcntl_signal(SIGTERM, SIG_DFL);
+                pcntl_signal(SIGCHLD, SIG_DFL);
+
                 if ($this->singleton) {
                     $this->createPidFile();
                 }
@@ -152,6 +155,11 @@ abstract class Daemon
 
         $this->registerSignalHandler(function ($signal) {
             switch ($signal) {
+                case SIGCHLD:
+                    while (($pid = pcntl_waitpid(-1, $status, WNOHANG)) > 0) {
+                        $this->onChildProcessExisted($pid);
+                    }
+                    break;
                 case SIGTERM:
                 case SIGHUP:
                 case SIGQUIT:
@@ -162,7 +170,7 @@ abstract class Daemon
                     return false;
             }
             return true;
-        }, array(SIGTERM, SIGQUIT, SIGINT));
+        }, array(SIGTERM, SIGQUIT, SIGINT, SIGCHLD));
     }
 
     private function registerSignalHandler($closure, array $signals)
@@ -172,5 +180,10 @@ abstract class Daemon
                 pcntl_signal($item, $closure, false);
             }
         }
+    }
+
+    private function onChildProcessExisted($pid)
+    {
+        $this->log('child Process killed', 'from killed child process.' . $pid);
     }
 }

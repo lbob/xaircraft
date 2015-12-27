@@ -11,6 +11,7 @@ namespace Xaircraft\Console\Daemon;
 
 
 use Xaircraft\App;
+use Xaircraft\Console\Process;
 use Xaircraft\Core\IO\File;
 
 class IdleDaemon extends Daemon
@@ -19,7 +20,11 @@ class IdleDaemon extends Daemon
     public function handle()
     {
         $status = file_get_contents('/proc/' . $this->getPid() . '/status');
-        $this->log('test', $status);
+        //$this->log('test', $status);
+        Process::fork(function () {
+            sleep(3);
+            $this->log('child process', 'from child process.' . posix_getpid());
+        });
         sleep(30);
     }
 
