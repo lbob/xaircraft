@@ -10,6 +10,7 @@ namespace Xaircraft\Console\Daemon;
 
 
 use Xaircraft\App;
+use Xaircraft\Console\Process;
 use Xaircraft\Core\IO\File;
 use Xaircraft\Core\Strings;
 use Xaircraft\Exception\DaemonException;
@@ -17,6 +18,7 @@ use Xaircraft\Exception\DaemonException;
 abstract class Daemon
 {
     private $started = false;
+    private $childProcesses = array();
     protected $singleton = true;
     protected $args;
     protected $folder;
@@ -35,6 +37,15 @@ abstract class Daemon
     public abstract function beforeStop();
 
     public abstract function handle();
+
+    public function fork($target)
+    {
+        $process = Process::fork($target);
+
+        $this->childProcesses[] = $process;
+
+        return $process;
+    }
 
     public function start()
     {
@@ -120,6 +131,13 @@ abstract class Daemon
 
     private function onStopping()
     {
+        if (!empty($this->childProcesses)) {
+            /** @var Process $process */
+            foreach ($this->childProcesses as $process) {
+                $process->stop();
+            }
+        }
+
         if (file_exists($this->pidFilePath)) {
             unlink($this->pidFilePath);
         }
