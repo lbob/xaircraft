@@ -48,7 +48,7 @@ class ConsoleLoader extends AppModule
         DaemonFactory::bind('idle', IdleDaemon::class);
 
         Settings::load('commands');
-        Settings::load('daemons');
+        Settings::load('daemon');
 
         DI::bindSingleton(AuthStorage::class, CacheAuthStorage::class);
     }

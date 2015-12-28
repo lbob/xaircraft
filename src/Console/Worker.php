@@ -14,6 +14,4 @@ interface Worker
     public function beforeStart();
 
     public function handle();
-
-    public function beforeStop();
 }
