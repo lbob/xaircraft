@@ -20,7 +20,7 @@ class CurrentUser extends Container
         $this['name'] = $name;
         $this['level'] = $level;
         $this['email'] = $email;
-        $this['extra'] = $extra;
+        $this['extra'] = serialize($extra);
     }
 
     public static function create($id, $username, $name, $level, $email, $extra)
@@ -55,6 +55,6 @@ class CurrentUser extends Container
 
     public function getExtra()
     {
-        return $this['extra'];
+        return unserialize($this['extra']);
     }
 }
