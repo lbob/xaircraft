@@ -269,13 +269,21 @@ class TableQuery implements QueryStringBuilder
     {
         $this->queryType = self::QUERY_SELECT;
 
-        if ($offset <= 0) {
+        if ($offset < 0) {
             throw new QueryException("Selection query error. skip $offset.");
         }
 
         $this->selectQuerySettings['skip_offset'] = $offset;
 
         return $this;
+    }
+
+    public function page($pageIndex = 1, $pageSize)
+    {
+        $offset = ($pageIndex - 1) * $pageSize;
+        $offset = $offset > 0 ? $offset : 0;
+
+        return $this->take($pageSize)->skip($offset);
     }
 
     public function pluck($field)

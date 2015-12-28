@@ -20,4 +20,11 @@ class user_home_controller extends Controller implements OutputStatusException
         var_dump($list);
         var_dump(\Xaircraft\DB::getQueryLog());
     }
+
+    public function test_page()
+    {
+        $query = \Xaircraft\DB::table('user')->select()->page(3, 2)->execute();
+        var_dump($query);
+        var_dump(\Xaircraft\DB::getQueryLog());
+    }
 }
