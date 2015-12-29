@@ -31,8 +31,8 @@ class WhereConditionBuilder extends ConditionBuilder
     public function getQueryString(QueryContext $context)
     {
         $statements = array();
-        $field = $this->field->getName($context);
         if (!isset($this->clause)) {
+            $field = $this->field->getName($context);
             if ($this->value instanceof Raw) {
                 $statements[] = "$field $this->operator " . $this->value->getValue();
             } else {
@@ -40,7 +40,7 @@ class WhereConditionBuilder extends ConditionBuilder
                 $context->param($this->value);
             }
         } else {
-            $whereQuery = new WhereQuery($context);
+            $whereQuery = new WhereQuery();
             call_user_func($this->clause, $whereQuery);
             $statements[] = $whereQuery->getQueryString($context);
         }

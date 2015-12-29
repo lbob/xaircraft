@@ -25,7 +25,7 @@ class SelectionQueryBuilder
                  * @var FieldInfo $field
                  */
                 if (isset($field->queryHandler) && is_callable($field->queryHandler)) {
-                    $whereQuery = new WhereQuery($context, true);
+                    $whereQuery = new WhereQuery(true);
                     call_user_func($field->queryHandler, $whereQuery);
                     $item = '(' . $whereQuery->getQueryString($context) . ') AS ' . $field->getAlias();
                     if ($item === '') {

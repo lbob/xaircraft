@@ -49,6 +49,16 @@ class home_controller extends Controller
         var_dump(DB::getQueryLog());
     }
 
+    public function test_where()
+    {
+        $query = DB::table('user')->where(function (WhereQuery $whereQuery) {
+            $whereQuery->where('id', '>', 0)
+                ->orWhere('name', 'LIKE', 'test');
+        })->select();
+
+        var_dump($query->execute());
+    }
+
     /**
      * @throws \Xaircraft\Exception\ModelException
      * @output_status_exception

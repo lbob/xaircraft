@@ -3,6 +3,7 @@
 namespace Xaircraft\Extensions\WeChat;
 use Xaircraft\App;
 use Xaircraft\Cache\CacheDriver;
+use Xaircraft\Configuration\Settings;
 
 
 /**
@@ -60,7 +61,7 @@ abstract class Corporation
 
     public final function option($key)
     {
-        $configs = require App::path('wechat');
+        $configs = Settings::load('wechat');
         if (!isset($configs) || empty($configs) || !array_key_exists($this->getCorpName(), $configs)) {
             throw new \Exception("缺少微信配置信息");
         }
