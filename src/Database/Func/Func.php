@@ -15,4 +15,9 @@ class Func
     {
         return new CountFieldFunction($field);
     }
+
+    public static function distinct($field)
+    {
+        return new DistinctFieldFunction($field);
+    }
 }
