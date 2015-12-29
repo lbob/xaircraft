@@ -14,6 +14,7 @@ use Xaircraft\Database\Condition\WhereConditionBuilder;
 use Xaircraft\Database\Condition\WhereExistsConditionBuilder;
 use Xaircraft\Database\Condition\WhereInConditionBuilder;
 use Xaircraft\Database\Data\FieldFormatInfo;
+use Xaircraft\Database\Func\FieldFunction;
 use Xaircraft\Database\Func\Func;
 use Xaircraft\DB;
 use Xaircraft\DI;
@@ -197,7 +198,7 @@ class TableQuery implements QueryStringBuilder
         $fields = array();
         if (func_num_args() > 0) {
             foreach (func_get_args() as $item) {
-                if (is_string($item)) {
+                if (is_string($item) || $item instanceof FieldFunction) {
                     $fields[] = FieldInfo::make($item);
                 }
             }
@@ -212,6 +213,8 @@ class TableQuery implements QueryStringBuilder
                     } else {
                         if (is_callable($value)) {
                             $fields[] = FieldInfo::make($key, $key, $value);
+                        } else if ($value instanceof FieldFunction) {
+                            $fields[] = FieldInfo::make($value, $key);
                         } else {
                             $fields[] = FieldInfo::makeValueColumn($key, $value);
                         }
