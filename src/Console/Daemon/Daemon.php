@@ -196,7 +196,7 @@ abstract class Daemon
                     return false;
             }
             return true;
-        }, array(SIGTERM, SIGQUIT, SIGINT, SIGCHLD));
+        }, array(SIGTERM, SIGQUIT, SIGINT));
     }
 
     private function registerSignalHandler($closure, array $signals)
