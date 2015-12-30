@@ -55,11 +55,19 @@ class Json
         return null;
     }
 
-    public static function toArray($json)
+    public static function toArray($json, $class = null)
     {
         $list = json_decode($json, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \Exception("Json encode error.[$json]");
+        }
+
+        if (isset($class)) {
+            $result = array();
+            foreach ($list as $item) {
+                $result[] = self::toObject($item, $class);
+            }
+            return $result;
         }
         return $list;
     }

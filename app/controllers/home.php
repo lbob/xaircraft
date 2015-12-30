@@ -153,7 +153,7 @@ class home_controller extends Controller
 
     public function test_json()
     {
-        $message = Json::toObject('{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}}', Message::class);
+        $message = Json::toArray('[{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}}]', Message::class);
         var_dump($message);
 
         $list = Json::toArray("[1,2,3,4,5,6]");
