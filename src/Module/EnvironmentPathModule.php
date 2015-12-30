@@ -22,8 +22,9 @@ class EnvironmentPathModule extends AppModule
         App::path('exception', App::path('config') . '/exception.php');
         App::path('runtime', App::path('app') . '/runtime');
         App::path('daemon', App::path('config') . '/daemon.php');
-        App::path('commands', App::path('config') . '/commands.php');
+        App::path('command', App::path('config') . '/command.php');
         App::path('log', App::path('app') . '/log');
+        App::path('async_job', App::path('cache') . '/async_job');
     }
 
     public function handle()

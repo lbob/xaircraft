@@ -37,7 +37,13 @@ class DaemonFactory
             unset($argv[1]);
             unset($argv[2]);
             try {
-                $daemon = DI::get($name, array('args' => self::parseArgs($argv)));
+                $sync = false;
+                if (isset($argv[3])) {
+                    if ("--sync" === $argv[3]) {
+                        $sync = true;
+                    }
+                }
+                $daemon = DI::get($name, array('args' => self::parseArgs($argv), 'sync' => $sync));
                 if ($daemon instanceof Daemon) {
                     return $daemon;
                 }

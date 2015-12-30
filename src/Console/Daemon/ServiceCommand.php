@@ -40,8 +40,8 @@ class ServiceCommand extends Command
                 $name = $item->getName();
                 $status = $item->getStatus();
                 $state = $status['State'];
-                $stateDescription = $status['State_Description'];
-                $vmSize = $status['Current_Virtual_Memory_Size'];
+                $stateDescription = array_key_exists('State_Description', $status) ? $status['State_Description'] : "";
+                $vmSize = array_key_exists('Current_Virtual_Memory_Size', $status) ? $status['Current_Virtual_Memory_Size'] : "";
                 Console::line("PID=$pid,Name=$name,State=$state($stateDescription),VmSize=$vmSize kB");
             }
         } else {

@@ -1,13 +1,16 @@
 <?php
 use Account\User;
+use Xaircraft\Async\Job;
 use Xaircraft\Authentication\Auth;
 use Xaircraft\Authentication\Contract\CurrentUser;
+use Xaircraft\Core\IO\File;
 use Xaircraft\Core\Json;
 use Xaircraft\Core\Strings;
 use Xaircraft\Database\Data\FieldType;
 use Xaircraft\Database\Func\Func;
 use Xaircraft\Database\WhereQuery;
 use Xaircraft\DB;
+use Xaircraft\DI;
 use Xaircraft\Nebula\Model;
 use Xaircraft\Web\Mvc\Argument\Post;
 use Xaircraft\Web\Mvc\Controller;
@@ -202,5 +205,33 @@ class home_controller extends Controller
         while (true) {
             fwrite($fileHandle, yield . "\n");
         }
+    }
+
+    public function test_closure()
+    {
+        $task = new Task(function () {
+            var_dump('hello');
+        });
+        $this->closure_dump($task->getClosure());
+    }
+
+    private function closure_dump($closure)
+    {
+        try {
+            $func = new ReflectionFunction($closure);
+        } catch (ReflectionException $e) {
+            echo $e->getMessage();
+            return;
+        }
+        $start = $func->getStartLine() - 1;
+        $end = $func->getEndLine() - 1;
+        $filename = $func->getFileName();
+        echo implode("", array_slice(file($filename), $start, $end - $start + 1));
+    }
+
+    public function test_job()
+    {
+        $job = new HelloJob();
+        Job::push($job);
     }
 }

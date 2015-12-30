@@ -22,12 +22,14 @@ abstract class Daemon
     protected $singleton = true;
     protected $args;
     protected $folder;
+    private $sync;
 
-    public function __construct(array $args)
+    public function __construct(array $args, $sync = false)
     {
         $this->pidFilePath = App::path('runtime') . '/daemon/' . get_called_class() . '.pid';
         $this->args = $args;
         $this->folder = App::path('cache') . '/daemon/' . Strings::camelToSnake(str_replace('\\', '_', get_called_class()));
+        $this->sync = $sync;
 
         $this->initialize();
     }
@@ -49,6 +51,11 @@ abstract class Daemon
 
     public function start()
     {
+        if ($this->sync) {
+            $this->handle();
+            return;
+        }
+
         if ($this->started) {
             return;
         }
@@ -125,6 +132,7 @@ abstract class Daemon
         if ($pid > 0 && posix_kill($pid, 0)) {
             throw new DaemonException($this->getName(), "The daemon process is already started.");
         } else {
+            unlink($this->pidFilePath);
             throw new DaemonException($this->getName(), "The daemon process end abnormally.");
         }
     }

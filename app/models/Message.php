@@ -17,6 +17,8 @@ class Message
      */
     public $contract;
 
+    public $closure;
+
     private $emailSender;
 
     public function __construct(EmailSender $emailSender)
@@ -29,5 +31,10 @@ class Message
     public function sendEmail($to)
     {
         $this->emailSender->send($to, $this->content);
+    }
+
+    public function setClosure($closure)
+    {
+        $this->closure = $closure;
     }
 }
