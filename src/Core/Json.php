@@ -17,13 +17,16 @@ use Xaircraft\Nebula\Model;
 
 class Json
 {
-    public static function toObject($json, $class)
+    public static function toObject($arg, $class)
     {
         if (is_string($class)) {
             $class = new \ReflectionClass($class);
         }
 
-        $params = self::toArray($json);
+        $params = $arg;
+        if (is_string($arg) && !is_array($arg)) {
+            $params = self::toArray($arg);
+        }
         if (!empty($params)) {
             $object = DI::get($class->name);
             if ($object instanceof Model) {
@@ -40,7 +43,7 @@ class Json
                                 /** @var Attribute $attribute */
                                 $attribute = $attributes[0];
                                 $class = $attribute->invoke();
-                                $value = self::toObject(json_encode($value), $class);
+                                $value = self::toObject($value, $class);
                             }
                             $property->setValue($object, $value);
                         }
