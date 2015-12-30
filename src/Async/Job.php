@@ -75,11 +75,7 @@ abstract class Job
 
     public static function push(Job $job)
     {
-        if (Globals::RUNTIME_MODE_CLI === App::environment(Globals::ENV_RUNTIME_MODE)) {
-            $path = App::path('async_job') . "/" . $job->getID() . ".job";
-            File::writeText($path, serialize($job));
-        } else {
-            $job->fire();
-        }
+        $path = App::path('async_job') . "/" . $job->getID() . ".job";
+        File::writeText($path, serialize($job));
     }
 }
