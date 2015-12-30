@@ -14,6 +14,7 @@ class TestJobCommand extends Command
     public function handle()
     {
         $job = new HelloJob();
+        $job->loop(3);
         Job::push($job);
     }
 }

@@ -19,10 +19,13 @@ abstract class Job
     private $id;
     private $time = 0;
     private $loop = 0;
+    private $terminate = false;
+    private $path;
 
     public function __construct()
     {
         $this->id = Strings::guid();
+        $this->path = App::path('async_job') . '/' . $this->id . '.job';
     }
 
     public function getID()
@@ -46,6 +49,26 @@ abstract class Job
         }
 
         return $this->loop;
+    }
+
+    public function terminate()
+    {
+        $this->terminate = true;
+    }
+
+    public function isTerminate()
+    {
+        return $this->terminate;
+    }
+
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    public function getName()
+    {
+        return get_called_class();
     }
 
     public abstract function fire();

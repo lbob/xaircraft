@@ -234,4 +234,11 @@ class home_controller extends Controller
         $job = new HelloJob();
         Job::push($job);
     }
+
+    public function test_trace_dir()
+    {
+        \Xaircraft\Core\IO\Directory::traceDir('D:\xampp\htdocs\sites\agri\framework\trunk\xaircraft\app\cache', function ($dir, $file) {
+            var_dump($dir . '/' . $file);
+        });
+    }
 }

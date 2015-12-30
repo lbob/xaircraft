@@ -35,4 +35,20 @@ class Directory
             }
         }
     }
+
+    public static function traceDir($dir, $closure = null)
+    {
+        if (is_dir($dir) && $dh = opendir($dir)) {
+            while (false !== ($file = readdir($dh))) {
+                if (isset($closure) && is_callable($closure)) {
+                    call_user_func($closure, $dir, $file);
+                }
+                $subDir = $dir . '/' . $file;
+                if (is_dir($subDir) && "." !== $file && ".." !== $file) {
+                    self::traceDir($subDir, $closure);
+                }
+            }
+            closedir($dh);
+        }
+    }
 }

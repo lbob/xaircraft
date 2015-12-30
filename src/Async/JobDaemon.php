@@ -31,18 +31,22 @@ class JobDaemon extends Daemon
         $jobs = $this->getJobs();
         foreach ($jobs as $job) {
             /** @var Job $job */
+            if ($job->isTerminate()) {
+                unlink($job->getPath());
+                continue;
+            }
             $time = $job->time();
             if (!isset($time) || $time <= time()) {
+                unlink($job->getPath());
                 $this->fork(function () use ($job) {
-                    $this->log('Job', 'Job [' . $job->getID() . '] running.');
+                    $time = time();
+                    $this->log('Job', 'Job [' . $job->getName() . '][' . $job->getID() . '] running.');
                     $job->fire();
                     if ($job->loop() > 0) {
-                        while (true) {
-                            sleep($job->loop());
-                            $job->fire();
-                        }
+                        $time = $job->loop() + $time;
+                        $job->time($time);
+                        Job::push($job);
                     }
-                    unlink(App::path('async_job') . "/" . $job->getID() . ".job");
                 });
             }
         }

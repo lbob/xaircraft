@@ -1,4 +1,6 @@
 <?php
+use Xaircraft\Async\Job;
+use Xaircraft\Core\IO\File;
 
 /**
  * Created by PhpStorm.
@@ -6,11 +8,11 @@
  * Date: 2015/12/30
  * Time: 15:38
  */
-class HelloJob extends \Xaircraft\Async\Job
+class HelloJob extends Job
 {
 
     public function fire()
     {
-        \Xaircraft\Core\IO\File::appendText(__DIR__ . '/output.txt', date("Y-m-d H:i:s") . "\r\n");
+        File::appendText(__DIR__ . '/output.txt', date("Y-m-d H:i:s") . "\r\n");
     }
 }

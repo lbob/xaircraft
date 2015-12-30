@@ -10,6 +10,7 @@ namespace Xaircraft\Console;
 
 
 use Xaircraft\App;
+use Xaircraft\Async\JobCommand;
 use Xaircraft\Async\JobDaemon;
 use Xaircraft\Authentication\AuthStorage;
 use Xaircraft\Authentication\CacheAuthStorage;
@@ -45,6 +46,7 @@ class ConsoleLoader extends AppModule
         Command::bind('migration', MigrationCommand::class);
         Command::bind('daemon', DaemonCommand::class);
         Command::bind('service', ServiceCommand::class);
+        Command::bind('job', JobCommand::class);
 
         DaemonFactory::bind('idle', IdleDaemon::class);
         DaemonFactory::bind('job', JobDaemon::class);
