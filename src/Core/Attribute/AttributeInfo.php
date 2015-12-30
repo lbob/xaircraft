@@ -6,7 +6,7 @@
  * Time: 18:34
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 class AttributeInfo

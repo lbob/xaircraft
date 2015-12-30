@@ -9,11 +9,11 @@
 namespace Xaircraft\Web\Mvc;
 
 
+use Xaircraft\Core\Attribute\AttributeCollection;
+use Xaircraft\Core\Attribute\OutputStatusExceptionAttribute;
 use Xaircraft\DI;
 use Xaircraft\Exception\HttpAuthenticationException;
 use Xaircraft\Web\Mvc\Argument\Argument;
-use Xaircraft\Web\Mvc\Attribute\AttributeCollection;
-use Xaircraft\Web\Mvc\Attribute\OutputStatusExceptionAttribute;
 
 class ActionInfo
 {

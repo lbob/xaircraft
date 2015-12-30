@@ -12,6 +12,11 @@ class Message
 
     public $content = "Hello message.";
 
+    /**
+     * @var Test\Hello\Contract
+     */
+    public $contract;
+
     private $emailSender;
 
     public function __construct(EmailSender $emailSender)

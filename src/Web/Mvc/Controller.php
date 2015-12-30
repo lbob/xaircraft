@@ -9,6 +9,8 @@
 namespace Xaircraft\Web\Mvc;
 
 
+use Xaircraft\Core\Attribute\AttributeCollection;
+use Xaircraft\Core\Attribute\OutputStatusExceptionAttribute;
 use Xaircraft\DI;
 use Xaircraft\Exception\WebException;
 use Xaircraft\Web\Http\Request;
@@ -18,8 +20,6 @@ use Xaircraft\Web\Mvc\Action\ObjectResult;
 use Xaircraft\Web\Mvc\Action\StatusResult;
 use Xaircraft\Web\Mvc\Action\TextResult;
 use Xaircraft\Web\Mvc\Action\ViewResult;
-use Xaircraft\Web\Mvc\Attribute\AttributeCollection;
-use Xaircraft\Web\Mvc\Attribute\OutputStatusExceptionAttribute;
 
 /**
  * Class Controller

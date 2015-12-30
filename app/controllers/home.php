@@ -29,6 +29,9 @@ class home_controller extends Controller
      */
     public function index($id, $title)
     {
+        var_dump($id);
+        var_dump($title);
+
         $query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('p.id', '>', 0);
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('u.id', '>', 0);
 //        $query = \Xaircraft\DB::table('user')->select('name')->whereIn('id', function (WhereQuery $whereQuery) {
@@ -150,7 +153,7 @@ class home_controller extends Controller
 
     public function test_json()
     {
-        $message = Json::toObject('{"id":12,"content":"hello"}', Message::class);
+        $message = Json::toObject('{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}}', Message::class);
         var_dump($message);
 
         $list = Json::toArray("[1,2,3,4,5,6]");
@@ -165,5 +168,36 @@ class home_controller extends Controller
                 $whereQuery->from('project')->select('id')->top();
             }
         ))->execute();
+    }
+
+    public function test_coroutines()
+    {
+        $gen = $this->gen();
+        var_dump([$gen->current(), $gen->key()]);
+        var_dump($gen->send('ret1'));
+        var_dump($gen->send('ret2'));
+    }
+
+    function gen()
+    {
+        $ret = (yield 'key1' => 'yield1');
+        var_dump($ret);
+        $ret = (yield 'yield2');
+        var_dump($ret);
+    }
+
+    public function test_coroutines2()
+    {
+        $logger = $this->logger(__DIR__ . '/log');
+        $logger->send('foo');
+        $logger->send('bar');
+    }
+
+    function logger($fileName)
+    {
+        $fileHandle = fopen($fileName, 'a');
+        while (true) {
+            fwrite($fileHandle, yield . "\n");
+        }
     }
 }

@@ -6,7 +6,7 @@
  * Time: 15:03
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 class ParameterAttribute extends Attribute

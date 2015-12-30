@@ -10,12 +10,12 @@ namespace Xaircraft\Web\Mvc\Argument;
 
 
 use ReflectionParameter;
+use Xaircraft\Core\Attribute\AttributeCollection;
+use Xaircraft\Core\Attribute\ParameterAttribute;
 use Xaircraft\Core\Json;
 use Xaircraft\DI;
 use Xaircraft\Exception\ArgumentInvalidException;
 use Xaircraft\Nebula\Model;
-use Xaircraft\Web\Mvc\Attribute\AttributeCollection;
-use Xaircraft\Web\Mvc\Attribute\ParameterAttribute;
 
 abstract class Argument
 {

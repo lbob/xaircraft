@@ -6,7 +6,7 @@
  * Time: 5:35
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 class AttributeCollection

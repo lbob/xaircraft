@@ -6,7 +6,7 @@
  * Time: 23:08
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 class OutputStatusExceptionAttribute extends Attribute

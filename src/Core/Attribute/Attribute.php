@@ -6,7 +6,7 @@
  * Time: 23:07
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 abstract class Attribute
@@ -29,6 +29,9 @@ abstract class Attribute
                 break;
             case "output_status_exception":
                 $attribute = new OutputStatusExceptionAttribute();
+                break;
+            case "var":
+                $attribute = new VariableAttribute();
                 break;
         }
         if (isset($attribute)) {

@@ -6,7 +6,7 @@
  * Time: 23:10
  */
 
-namespace Xaircraft\Web\Mvc\Attribute;
+namespace Xaircraft\Core\Attribute;
 
 
 use Xaircraft\Authentication\Contract\Authorize;
