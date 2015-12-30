@@ -119,7 +119,7 @@ abstract class Daemon
     protected function log($key, $message)
     {
         $path = $this->folder . '/log/' . date("Ymd", time()) . '.log';
-        File::appendText($path, "[" . date("Y-m-d H:i:s", time()) . "] PID=" . $this->getPid() . " $key \r\n\r\n$message\r\n\r\n\r\n\r\n");
+        File::appendText($path, "[" . date("Y-m-d H:i:s", time()) . "] PID=" . $this->getPid() . "(" . posix_getpid() . ") $key \r\n\r\n$message\r\n\r\n\r\n\r\n");
     }
 
     private function checkPidFile()
