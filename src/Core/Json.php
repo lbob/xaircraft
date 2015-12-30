@@ -43,7 +43,11 @@ class Json
                                 /** @var Attribute $attribute */
                                 $attribute = $attributes[0];
                                 $class = $attribute->invoke();
-                                $value = self::toObject($value, $class);
+                                if (isset($class) && false === array_search(strtolower($class), array(
+                                        "string", "int", "boolean", "bool", "array", "double", "float", "resource"
+                                    ))) {
+                                    $value = self::toObject($value, $class);
+                                }
                             }
                             $property->setValue($object, $value);
                         }
@@ -59,7 +63,7 @@ class Json
     {
         $list = json_decode($json, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \Exception("Json encode error.[$json]");
+            throw new \Exception("Json decode error.[$json]");
         }
 
         if (isset($class)) {

@@ -10,6 +10,9 @@ class Contract
 {
     public $sender;
 
+    /**
+     * @var string test
+     */
     public $to;
 
     /**
