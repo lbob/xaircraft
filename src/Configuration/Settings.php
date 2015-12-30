@@ -19,7 +19,7 @@ class Settings
         $path = App::path($key);
 
         if (isset($path) && is_readable($path)) {
-            return require_once $path;
+            return require $path;
         }
         return null;
     }
