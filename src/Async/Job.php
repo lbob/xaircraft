@@ -16,8 +16,8 @@ use Xaircraft\Core\Strings;
 abstract class Job
 {
     private $id;
-    private $time;
-    private $loop;
+    private $time = 0;
+    private $loop = 0;
 
     public function __construct()
     {

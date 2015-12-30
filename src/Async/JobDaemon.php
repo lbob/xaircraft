@@ -31,7 +31,8 @@ class JobDaemon extends Daemon
         $jobs = $this->getJobs();
         foreach ($jobs as $job) {
             /** @var Job $job */
-            if ($job->time() <= time()) {
+            $time = $job->time();
+            if (!isset($time) || $time <= time()) {
                 $this->fork(function () use ($job) {
                     $this->log('Job', 'Job [' . $job->getID() . '] running.');
                     $job->fire();
@@ -41,6 +42,7 @@ class JobDaemon extends Daemon
                             $job->fire();
                         }
                     }
+                    unlink(App::path('async_job') . "/" . $job->getID() . ".job");
                 });
             }
         }
@@ -53,7 +55,9 @@ class JobDaemon extends Daemon
             if (is_dir($folder) && $dh = opendir($folder)) {
                 while (false !== ($file = readdir($dh))) {
                     $job = unserialize(File::readText($folder . '/' . $file));
-                    yield $job;
+                    if ($job instanceof Job) {
+                        yield $job;
+                    }
                 }
                 closedir($dh);
             }

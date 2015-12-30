@@ -30,8 +30,6 @@ abstract class Daemon
         $this->args = $args;
         $this->folder = App::path('cache') . '/daemon/' . Strings::camelToSnake(str_replace('\\', '_', get_called_class()));
         $this->sync = $sync;
-
-        $this->initialize();
     }
 
     public abstract function beforeStart();
@@ -59,6 +57,8 @@ abstract class Daemon
         if ($this->started) {
             return;
         }
+
+        $this->initialize();
 
         $this->started = true;
 
