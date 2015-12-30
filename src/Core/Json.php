@@ -25,7 +25,11 @@ class Json
 
         $params = $arg;
         if (is_string($arg) && !is_array($arg)) {
-            $params = self::toArray($arg);
+            try {
+                $params = self::toArray($arg);
+            } catch (\Exception $ex) {
+                return $params;
+            }
         }
         if (!empty($params)) {
             $object = DI::get($class->name);
@@ -43,9 +47,7 @@ class Json
                                 /** @var Attribute $attribute */
                                 $attribute = $attributes[0];
                                 $class = $attribute->invoke();
-                                if (isset($class) && false === array_search(strtolower($class), array(
-                                        "string", "int", "boolean", "bool", "array", "double", "float", "resource"
-                                    ))) {
+                                if (isset($class)) {
                                     $value = self::toObject($value, $class);
                                 }
                             }
