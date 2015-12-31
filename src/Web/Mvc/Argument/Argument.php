@@ -71,6 +71,7 @@ abstract class Argument
         if (!empty($parameters)) {
             /** @var ReflectionParameter $parameter */
             foreach ($parameters as $parameter) {
+                $arg = null;
                 $attribute = ParameterAttribute::get($attributes, $parameter->name);
                 if (array_key_exists($parameter->name, $posts) && isset($attribute) && $attribute->isPost()) {
                     $arg = new PostArgument($parameter->name, $posts[$parameter->name], $parameter);
