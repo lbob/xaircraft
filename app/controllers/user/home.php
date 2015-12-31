@@ -1,4 +1,6 @@
 <?php
+use Xaircraft\Database\Paging;
+use Xaircraft\DB;
 use Xaircraft\DI;
 use Xaircraft\Web\Mvc\Controller;
 use Xaircraft\Web\Mvc\OutputStatusException;
@@ -23,8 +25,9 @@ class user_home_controller extends Controller implements OutputStatusException
 
     public function test_page()
     {
-        $query = \Xaircraft\DB::table('user')->select()->page(3, 2)->execute();
-        var_dump($query);
-        var_dump(\Xaircraft\DB::getQueryLog());
+        $result = DB::table('user')->select()->page(2, 3)->execute();
+
+        var_dump($result);
+        var_dump(DB::getQueryLog());
     }
 }
