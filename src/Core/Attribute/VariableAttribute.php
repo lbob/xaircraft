@@ -13,11 +13,19 @@ class VariableAttribute extends Attribute
 {
     private $class;
 
+    private $isArray = false;
+
     public function initialize($value)
     {
-        if (preg_match('#^[\\\\\/]?[a-zA-Z][a-zA-Z\_0-9\\\\\/]*$#i', $value)) {
+        if (preg_match('#^[\\\\\/]?[a-zA-Z][a-zA-Z\_0-9\\\\\/]*(?<arrayize>\[\])?$#i', $value, $match)) {
             $this->class = $value;
+            $this->isArray = array_key_exists('arrayize', $match);
         }
+    }
+
+    public function isArray()
+    {
+        return $this->isArray;
     }
 
     /**
