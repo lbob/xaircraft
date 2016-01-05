@@ -65,11 +65,16 @@ class Json
         return null;
     }
 
-    public static function toArray($json, $class = null)
+    public static function toArray($arg, $class = null)
     {
-        $list = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \Exception("Json decode error.[$json]");
+        if (is_string($arg) && !is_array($arg)) {
+            $list = json_decode($arg, true);
+
+            if (JSON_ERROR_NONE !== json_last_error()) {
+                throw new \Exception("Json decode error.[$arg]");
+            }
+        } else {
+            $list = $arg;
         }
 
         if (isset($class)) {

@@ -157,7 +157,7 @@ class home_controller extends Controller
     public function test_json()
     {
         $message = Json::toArray(
-            '[{"id":234234,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}},{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}}]',
+            '[{"hellos":[{"id":1,"name":"asdfasdf"},{"id":2,"name":"asdfasdf2"}],"id":234234,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}},{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test","message":{"id":12,"content":"hello","contract":{"sender":"test","to":"to_test"}}}}]',
             Message::class
         );
         var_dump($message);

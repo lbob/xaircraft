@@ -19,6 +19,11 @@ class Message
 
     public $closure;
 
+    /**
+     * @var \Test\Hello\Hello[]
+     */
+    public $hellos;
+
     private $emailSender;
 
     public function __construct(EmailSender $emailSender)
