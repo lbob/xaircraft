@@ -16,6 +16,8 @@ class Request
 {
     private $params = array();
 
+    private $headers = array();
+
     public function __construct(array $params)
     {
         $this->params = $params;
@@ -82,6 +84,26 @@ class Request
 
             return $posts;
         }
+    }
+
+    public function header($key)
+    {
+        if (empty($this->headers)) {
+            foreach (getallheaders() as $key => $value) {
+                $this->headers[$key] = $value;
+            }
+        }
+
+        if (empty($key) || '' === $key) {
+            return null;
+        }
+
+        $key = strtolower($key);
+
+        if (array_key_exists($key, $this->headers)) {
+            return $this->headers[$key];
+        }
+        return null;
     }
 
     public function isPost()
