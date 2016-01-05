@@ -44,11 +44,15 @@ class Json
                             $attributes = AttributeCollection::create($property->getDocComment())
                                 ->attributes(VariableAttribute::class);
                             if (!empty($attributes[0])) {
-                                /** @var Attribute $attribute */
+                                /** @var VariableAttribute $attribute */
                                 $attribute = $attributes[0];
                                 $class = $attribute->invoke();
                                 if (isset($class)) {
-                                    $value = self::toObject($value, $class);
+                                    if ($attribute->isArray()) {
+                                        $value = self::toArray($value, $class);
+                                    } else {
+                                        $value = self::toObject($value, $class);
+                                    }
                                 }
                             }
                             $property->setValue($object, $value);
