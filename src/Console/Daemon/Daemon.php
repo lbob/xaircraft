@@ -74,6 +74,10 @@ abstract class Daemon
         if (0 === $pid) {
             try {
                 chdir("/");
+                if (!$this->setUser()) {
+                    $this->onStopping();
+                    App::end();
+                }
                 fclose(STDIN);fclose(STDOUT);fclose(STDERR);
                 $stdin = fopen("/dev/null", "r");
                 $stdout = fopen("/dev/null", "a");
@@ -211,5 +215,18 @@ abstract class Daemon
     private function onChildProcessExisted($pid)
     {
         $this->log('child Process killed', 'from killed child process.' . $pid);
+    }
+
+    private function setUser()
+    {
+        $result = false;
+        $user = posix_getpwnam('nobody');
+        if ($user) {
+            $uid = $user['uid'];
+            $gid = $user['gid'];
+            $result = posix_setuid($uid);
+            posix_setgid($gid);
+        }
+        return $result;
     }
 }

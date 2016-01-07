@@ -98,8 +98,6 @@ class Request
             return null;
         }
 
-        $key = strtolower($key);
-
         if (array_key_exists($key, $this->headers)) {
             return $this->headers[$key];
         }
