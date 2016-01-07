@@ -213,7 +213,7 @@ abstract class Model extends Container
             if ($arg->getTableSchema()->getName() !== $model->schema->getName()) {
                 throw new ModelException("TableQuery must be table [" . $model->schema->getName() . "]'s query.");
             }
-            $query = $arg;
+            $query = $arg->select();
         } else if (is_numeric($arg)) {
             $query = DB::table($model->schema->getName())
                 ->where($model->schema->getAutoIncrementField(), $arg)

@@ -89,8 +89,8 @@ class Request
     public function header($key)
     {
         if (empty($this->headers)) {
-            foreach (getallheaders() as $key => $value) {
-                $this->headers[$key] = $value;
+            foreach (getallheaders() as $item => $value) {
+                $this->headers[$item] = $value;
             }
         }
 
