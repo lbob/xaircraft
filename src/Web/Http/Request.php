@@ -104,6 +104,11 @@ class Request
         return null;
     }
 
+    public function uri()
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
+
     public function isPost()
     {
         return isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) === 'post';
