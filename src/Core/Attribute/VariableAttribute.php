@@ -28,6 +28,13 @@ class VariableAttribute extends Attribute
         return $this->isArray;
     }
 
+    public function isClass()
+    {
+        return isset($this->class) && false === array_search($this->class, array(
+            "string", "double", "float", "long", "int", "integer", "bool", "boolean", "resource", "array"
+        ));
+    }
+
     /**
      * @return mixed
      */

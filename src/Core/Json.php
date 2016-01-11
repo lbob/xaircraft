@@ -47,7 +47,7 @@ class Json
                                 /** @var VariableAttribute $attribute */
                                 $attribute = $attributes[0];
                                 $class = $attribute->invoke();
-                                if (isset($class)) {
+                                if ($attribute->isClass() && isset($class)) {
                                     if ($attribute->isArray()) {
                                         $value = self::toArray($value, $class);
                                     } else {
