@@ -17,7 +17,7 @@ class VariableAttribute extends Attribute
 
     public function initialize($value)
     {
-        if (preg_match('#^(?<class>[\\\\\/]?[a-zA-Z][a-zA-Z\_0-9\\\\\/]*)(?<arrayize>\[\])?$#i', $value, $match)) {
+        if (preg_match('#^(?<class>[\\\\\/]?[a-zA-Z][a-zA-Z\_0-9\\\\\/]*)(?<arrayize>\[\])?#i', $value, $match)) {
             $this->class = $match['class'];
             $this->isArray = array_key_exists('arrayize', $match);
         }
