@@ -20,4 +20,9 @@ class Func
     {
         return new DistinctFieldFunction($field);
     }
+
+    public static function distance($lngField, $latField, $lng, $lat)
+    {
+        return new GISDistanceFieldFunction($lngField, $latField, $lng, $lat);
+    }
 }

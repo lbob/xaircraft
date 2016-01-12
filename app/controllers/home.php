@@ -57,10 +57,13 @@ class home_controller extends Controller
 
     public function test_query_func()
     {
+        $lng = 0;
+        $lat = 0;
+
         DB::database('agri_data_center');
         $list = DB::table('user')
             ->select()
-            ->where(Func::count(Func::count('id')), 0)
+            ->where(Func::distance("lng", "lat", $lng, $lat), 0)
             ->getQueryString();
         var_dump($list);
     }
