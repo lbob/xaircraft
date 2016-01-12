@@ -55,6 +55,16 @@ class home_controller extends Controller
         var_dump(DB::getQueryLog());
     }
 
+    public function test_query_func()
+    {
+        DB::database('agri_data_center');
+        $list = DB::table('user')
+            ->select()
+            ->where(Func::count(Func::count('id')), 0)
+            ->getQueryString();
+        var_dump($list);
+    }
+
     public function test_where()
     {
         $query = DB::table('user')->where(function (WhereQuery $whereQuery) {
@@ -74,7 +84,7 @@ class home_controller extends Controller
         $value = 0;
         var_dump($value == null);
         /** @var User $user */
-        $user = \Account\User::model();
+        $user = User::model();
         $user->name = "3";
         $user->password = "asdf";
         $user->level = "normal";

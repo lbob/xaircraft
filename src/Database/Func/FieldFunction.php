@@ -17,7 +17,11 @@ abstract class FieldFunction
 
     public function __construct($field)
     {
-        $this->field = trim($field);
+        if (is_string($field)) {
+            $this->field = trim($field);
+        } else {
+            $this->field = $field;
+        }
     }
 
     public abstract function getString(QueryContext $context);
