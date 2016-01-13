@@ -117,7 +117,7 @@ class WhereQuery implements QueryStringBuilder
         if (func_num_args() > 0) {
             foreach (func_get_args() as $item) {
                 if (is_string($item)) {
-                    $fields[] = FieldInfo::make($item);
+                    $fields[] = FieldInfo::make($item, null, null, true);
                 }
             }
         }
