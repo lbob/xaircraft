@@ -185,7 +185,7 @@ class WhereQuery implements QueryStringBuilder
             if (!$this->softDeleteLess && $this->subQueryTableSchema->getSoftDelete()) {
                 $this->addCondition(ConditionInfo::make(
                     ConditionInfo::CONDITION_AND,
-                    WhereConditionBuilder::makeNormal($this->subQueryTableSchema->getFieldSymbol(TableSchema::SOFT_DELETE_FIELD, false), '=', 0)
+                    WhereConditionBuilder::makeNormal($this->subQueryTableSchema->getFieldSymbol(TableSchema::SOFT_DELETE_FIELD, false), '=', 0, true)
                 ));
             }
 
