@@ -181,7 +181,7 @@ class WhereQuery implements QueryStringBuilder
             }
             return ConditionQueryBuilder::toString($context, $this->conditions);
         } else {
-            $context->schema($this->subQueryTableSchema);
+            $context->schema($this->subQueryTableSchema, true);
             if (!$this->softDeleteLess && $this->subQueryTableSchema->getSoftDelete()) {
                 $this->addCondition(ConditionInfo::make(
                     ConditionInfo::CONDITION_AND,

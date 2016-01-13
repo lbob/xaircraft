@@ -48,10 +48,10 @@ class home_controller extends Controller
 //        ))->where('id', 9);
 
         $result = $query->execute();
-        $queryString = $query->getQueryString();
+        //$queryString = $query->getQueryString();
 
         var_dump($result);
-        var_dump($queryString);
+        //var_dump($queryString);
 
         var_dump(DB::getQueryLog());
     }
