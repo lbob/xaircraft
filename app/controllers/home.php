@@ -63,7 +63,7 @@ class home_controller extends Controller
         DB::database('agri_data_center');
         $list = DB::table('user')
             ->select()
-            ->where(Func::distance("lng", "lat", $lng, $lat), 0)
+            ->where(Func::distance("id", "name", $lng, $lat), 0)
             ->getQueryString();
         var_dump($list);
     }

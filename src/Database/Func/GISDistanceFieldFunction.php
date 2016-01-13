@@ -23,9 +23,9 @@ class GISDistanceFieldFunction extends FieldFunction
 
     private $longitude;
 
-    private $half = 1000;
+    private $half = 180;
 
-    public function __construct($latField, $lngField, $lng, $lat)
+    public function __construct($lngField, $latField, $lng, $lat)
     {
         parent::__construct($latField);
 
