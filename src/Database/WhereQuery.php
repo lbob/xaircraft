@@ -11,6 +11,7 @@ namespace Xaircraft\Database;
 
 use Xaircraft\Database\Condition\WhereConditionBuilder;
 use Xaircraft\Database\Condition\WhereInConditionBuilder;
+use Xaircraft\Database\Func\FieldFunction;
 use Xaircraft\Database\Func\Func;
 use Xaircraft\Exception\QueryException;
 
@@ -52,11 +53,11 @@ class WhereQuery implements QueryStringBuilder
             $field = $args[0];
             if (2 === $argsLen) {
                 $this->addCondition(ConditionInfo::make(
-                    $orAnd, WhereConditionBuilder::makeNormal($field, '=', $args[1], true)));
+                    $orAnd, WhereConditionBuilder::makeNormal($field, '=', $args[1], $this->subQuery)));
             }
             if (3 === $argsLen) {
                 $this->addCondition(ConditionInfo::make(
-                    $orAnd, WhereConditionBuilder::makeNormal($field, $args[1], $args[2], true)
+                    $orAnd, WhereConditionBuilder::makeNormal($field, $args[1], $args[2], $this->subQuery)
                 ));
             }
         }
@@ -67,12 +68,12 @@ class WhereQuery implements QueryStringBuilder
         if (isset($params) && is_array($params)) {
             $this->addCondition(ConditionInfo::make(
                 ConditionInfo::CONDITION_AND,
-                WhereInConditionBuilder::makeNormal($field, $params, $notIn, true)
+                WhereInConditionBuilder::makeNormal($field, $params, $notIn, $this->subQuery)
             ));
         } else if (isset($params) && is_callable($params)) {
             $this->addCondition(ConditionInfo::make(
                 ConditionInfo::CONDITION_AND,
-                WhereInConditionBuilder::makeClause($field, $params, $notIn, true)
+                WhereInConditionBuilder::makeClause($field, $params, $notIn, $this->subQuery)
             ));
         }
     }
@@ -116,7 +117,7 @@ class WhereQuery implements QueryStringBuilder
         $fields = array();
         if (func_num_args() > 0) {
             foreach (func_get_args() as $item) {
-                if (is_string($item)) {
+                if (is_string($item) || $item instanceof FieldFunction) {
                     $fields[] = FieldInfo::make($item, null, null, true);
                 }
             }
@@ -131,6 +132,8 @@ class WhereQuery implements QueryStringBuilder
                     } else {
                         if (is_callable($value)) {
                             $fields[] = FieldInfo::make($key, $key, $value, true);
+                        } else if ($value instanceof FieldFunction) {
+                            $fields[] = FieldInfo::make($value, $key, null, true);
                         } else {
                             $fields[] = FieldInfo::makeValueColumn($key, $value);
                         }

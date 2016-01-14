@@ -39,4 +39,17 @@ class Strings
 
         return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
     }
+
+    public static function nonce($len = 4)
+    {
+        $str = null;
+        $strPol = "0123456789abcdefghijklmnopqrstuvwxyz";
+        $max = strlen($strPol) - 1;
+
+        for ($i = 0; $i < $len; $i++) {
+            $str .= $strPol[rand(0, $max)];
+        }
+
+        return $str;
+    }
 }
