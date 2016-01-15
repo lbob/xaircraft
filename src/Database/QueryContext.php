@@ -49,13 +49,17 @@ class QueryContext
             throw new QueryException("Invalid field.");
         }
 
-        $schemas = $isSubQueryField ? $this->subQuerySchemas : $this->schemas;
+        if (isset($prefix)) {
+            $schemas = array_merge($this->schemas, $this->subQuerySchemas);
+        } else {
+            $schemas = $isSubQueryField ? $this->subQuerySchemas : $this->schemas;
+        }
 
         if (empty($schemas)) {
             return $field;
         }
 
-        $count = $this->fieldExistsCountInSchemas($field, $prefix, $isSubQueryField);
+        $count = $this->fieldExistsCountInSchemas($schemas, $field, $prefix, $isSubQueryField);
         if (0 === $count) {
             $tables = array();
             foreach ($schemas as $item) {
@@ -95,14 +99,8 @@ class QueryContext
         $this->isInSubQuery = false;
     }
 
-    private function fieldExistsCountInSchemas($field, $prefix = null, $isSubQueryField = false)
+    private function fieldExistsCountInSchemas($schemas, $field, $prefix = null, $isSubQueryField = false)
     {
-        $schemas = $isSubQueryField ? $this->subQuerySchemas : $this->schemas;
-
-        if (empty($schemas)) {
-            return true;
-        }
-
         $count = 0;
 
         /** @var TableSchema $schema */

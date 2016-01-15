@@ -66,8 +66,8 @@ class home_controller extends Controller implements OutputStatusException
     public function test_sub_query_func()
     {
         $query = DB::table('user')->whereIn('id', function (WhereQuery $whereQuery) {
-            $whereQuery->select()->from('product')->where(Func::sum('id'), 10);
-        })->select(Func::sum('id'));
+            $whereQuery->select()->from('product')->where(Func::sum('user.id'), 0);
+        })->select(Func::sum('user.id'));
         var_dump($query->getQueryString());
     }
 
