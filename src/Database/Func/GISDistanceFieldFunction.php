@@ -39,8 +39,8 @@ class GISDistanceFieldFunction extends FieldFunction
     {
         $pi = Globals::PI;
         $earthRadius = Globals::EARTH_RADIUS;
-        $latFieldName = FieldInfo::make($this->latField)->getName($context);
-        $lngFieldName = FieldInfo::make($this->lngField)->getName($context);
+        $latFieldName = $context->makeFieldInfo($this->latField)->getName($context);
+        $lngFieldName = $context->makeFieldInfo($this->lngField)->getName($context);
         return "ACOS(SIN(($this->latitude * $pi) / $this->half) * SIN(($latFieldName * $pi) / $this->half) + COS(($this->latitude * $pi) / $this->half) * COS(($latFieldName * $pi) / $this->half) * COS(($this->longitude * $pi) / $this->half - ($lngFieldName * $pi) / $this->half)) * $earthRadius";
     }
 }

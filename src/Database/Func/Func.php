@@ -25,4 +25,9 @@ class Func
     {
         return new GISDistanceFieldFunction($lngField, $latField, $lng, $lat);
     }
+
+    public static function sum($field)
+    {
+        return new SumFieldFunction($field);
+    }
 }
