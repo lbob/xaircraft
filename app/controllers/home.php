@@ -14,6 +14,7 @@ use Xaircraft\DI;
 use Xaircraft\Nebula\Model;
 use Xaircraft\Web\Mvc\Argument\Post;
 use Xaircraft\Web\Mvc\Controller;
+use Xaircraft\Web\Mvc\OutputStatusException;
 
 /**
  * Created by PhpStorm.
@@ -23,14 +24,15 @@ use Xaircraft\Web\Mvc\Controller;
  * @auth LoginAuthorize
  * @auth LoginAuthorize2(userID=123, permission='admin;normal.aa')
  */
-class home_controller extends Controller
+class home_controller extends Controller implements OutputStatusException
 {
     /**
      * @param $id
      * @param $title
      * @return \Xaircraft\Web\Mvc\Action\TextResult
+     * @output_status_exception
      */
-    public function index($id = 2, $title = 'sdfsf', array $test = array('ate'))
+    public function index($id = 2, $title = 'sdfsf', array $test)
     {
         DB::database('agri_data_center');
         var_dump($id);

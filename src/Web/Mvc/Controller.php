@@ -9,6 +9,7 @@
 namespace Xaircraft\Web\Mvc;
 
 
+use Exception;
 use Xaircraft\Core\Attribute\AttributeCollection;
 use Xaircraft\Core\Attribute\OutputStatusExceptionAttribute;
 use Xaircraft\DI;
@@ -89,7 +90,7 @@ abstract class Controller
             try {
                 $actionResult = $actionInfo->invoke($controller->req->params(), $controller->req->posts());
                 return $actionResult;
-            } catch (\Exception $ex) {
+            } catch (Exception $ex) {
                 if ($controller instanceof OutputStatusException ||
                     $actionInfo->getIfOutputStatusException() ||
                     $controller->attributes->exists(OutputStatusExceptionAttribute::class)) {
