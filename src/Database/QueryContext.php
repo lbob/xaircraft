@@ -22,6 +22,8 @@ class QueryContext
 
     private $parameters = array();
 
+    private $isInSubQuery = false;
+
     public function param($value)
     {
         $this->parameters[] = $value;
@@ -76,6 +78,21 @@ class QueryContext
             }
         }
         return $field;
+    }
+
+    public function makeFieldInfo($name, $alias = null, $queryHandler = null, $isSubQueryField = false)
+    {
+        return FieldInfo::make($name, $alias, $queryHandler, $this->isInSubQuery ? true : $isSubQueryField);
+    }
+
+    public function entrySubQuery()
+    {
+        $this->isInSubQuery = true;
+    }
+
+    public function exitSubQuery()
+    {
+        $this->isInSubQuery = false;
     }
 
     private function fieldExistsCountInSchemas($field, $prefix = null, $isSubQueryField = false)

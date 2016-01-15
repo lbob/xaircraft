@@ -178,10 +178,12 @@ class WhereQuery implements QueryStringBuilder
 
     public function getQueryString(QueryContext $context)
     {
+        $context->entrySubQuery();
         if (!$this->subQuery) {
             if ($this->subQueryLimit) {
                 throw new QueryException("Must be sub-query in [" . ConditionQueryBuilder::toString($context, $this->conditions) . "]");
             }
+            $context->exitSubQuery();
             return ConditionQueryBuilder::toString($context, $this->conditions);
         } else {
             $context->schema($this->subQueryTableSchema, true);
@@ -200,6 +202,7 @@ class WhereQuery implements QueryStringBuilder
                 $statements[] = "WHERE " . $condition;
             }
 
+            $context->exitSubQuery();
             return implode(' ', $statements);
         }
     }

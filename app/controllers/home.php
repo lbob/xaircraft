@@ -26,6 +26,11 @@ use Xaircraft\Web\Mvc\OutputStatusException;
  */
 class home_controller extends Controller implements OutputStatusException
 {
+    public function __construct()
+    {
+        DB::database('agri_data_center');
+    }
+
     /**
      * @param $id
      * @param $title
@@ -34,7 +39,6 @@ class home_controller extends Controller implements OutputStatusException
      */
     public function index($id = 2, $title = 'sdfsf', array $test)
     {
-        DB::database('agri_data_center');
         var_dump($id);
         var_dump($title);
         var_dump($test);
@@ -57,6 +61,14 @@ class home_controller extends Controller implements OutputStatusException
         //var_dump($queryString);
 
         var_dump(DB::getQueryLog());
+    }
+
+    public function test_sub_query_func()
+    {
+        $query = DB::table('user')->whereIn('id', function (WhereQuery $whereQuery) {
+            $whereQuery->select()->from('product')->where(Func::count('id'), 10);
+        })->select();
+        var_dump($query->getQueryString());
     }
 
     public function test_query_func()

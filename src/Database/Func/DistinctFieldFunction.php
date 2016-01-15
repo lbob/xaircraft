@@ -18,7 +18,7 @@ class DistinctFieldFunction extends FieldFunction
     public function getString(QueryContext $context)
     {
         if ("*" !== $this->field) {
-            $field = FieldInfo::make($this->field);
+            $field = $context->makeFieldInfo($this->field);
             return "DISTINCT(" . $field->getName($context) . ")";
         }
         return "DISTINCT(*)";
