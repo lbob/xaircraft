@@ -10,6 +10,8 @@ namespace Xaircraft\Database\Condition;
 
 
 use Xaircraft\Database\QueryContext;
+use Xaircraft\Database\WhereQuery;
+use Xaircraft\Exception\QueryException;
 
 class WhereExistsConditionBuilder extends  ConditionBuilder
 {
@@ -17,7 +19,12 @@ class WhereExistsConditionBuilder extends  ConditionBuilder
 
     public function getQueryString(QueryContext $context)
     {
-        // TODO: Implement getQueryString() method.
+        if (isset($this->clause)) {
+            $whereQuery = new WhereQuery(true);
+            call_user_func($this->clause, $whereQuery);
+            return "EXISTS(" . $whereQuery->getQueryString($context) . ")";
+        }
+        throw new QueryException("WhereExists Condition build error.");
     }
 
     public static function make($clause)
