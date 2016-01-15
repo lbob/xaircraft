@@ -9,8 +9,12 @@
 use Xaircraft\Core\IO\File;
 use Xaircraft\Exception\DaemonException;
 use Xaircraft\Exception\HttpAuthenticationException;
+use Xaircraft\Exception\WebException;
 
 return array(
+    WebException::class => function ($ex) {
+        echo 'asdf';
+    },
     HttpAuthenticationException::class => function ($ex) {
         var_dump("aa");
     },
