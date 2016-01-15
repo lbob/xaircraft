@@ -82,7 +82,14 @@ abstract class Argument
                 if (isset($arg)) {
                     $args[$parameter->name] = $arg->getValue();
                 } else {
-                    $args[$parameter->name] = null;
+                    if (!$parameter->allowsNull() && !$parameter->isDefaultValueAvailable()) {
+                        throw new ArgumentInvalidException("Argument [$parameter->name] can't be null.");
+                    }
+                    if ($parameter->isDefaultValueAvailable()) {
+                        $args[$parameter->name] = $parameter->getDefaultValue();
+                    } else {
+                        $args[$parameter->name] = null;
+                    }
                 }
             }
         }

@@ -30,11 +30,12 @@ class home_controller extends Controller
      * @param $title
      * @return \Xaircraft\Web\Mvc\Action\TextResult
      */
-    public function index($id, $title)
+    public function index($id = 2, $title = 'sdfsf', array $test = array('ate'))
     {
         DB::database('agri_data_center');
         var_dump($id);
         var_dump($title);
+        var_dump($test);
 
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('p.id', '>', 0);
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('u.id', '>', 0);
