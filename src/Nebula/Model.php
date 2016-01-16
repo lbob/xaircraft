@@ -85,9 +85,9 @@ abstract class Model extends Container
         return $this->entity->isModified($field);
     }
 
-    public function fields()
+    public function fields(array $fieldFilter = null)
     {
-        return $this->entity->fields();
+        return $this->entity->fields($fieldFilter);
     }
 
     public function save(array $fields = null)

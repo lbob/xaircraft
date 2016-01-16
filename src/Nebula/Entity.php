@@ -9,6 +9,7 @@
 namespace Xaircraft\Nebula;
 
 
+use Xaircraft\Core\Collections\Generic;
 use Xaircraft\Database\TableQuery;
 use Xaircraft\DB;
 use Xaircraft\Exception\EntityException;
@@ -84,9 +85,9 @@ class Entity
         }
     }
 
-    public function fields()
+    public function fields(array $fieldFilter = null)
     {
-        return $this->fields;
+        return Generic::array_key_filter($this->fields, $fieldFilter);
     }
 
     public function isExists()
