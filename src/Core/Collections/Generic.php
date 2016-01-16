@@ -11,17 +11,26 @@ namespace Xaircraft\Core\Collections;
 
 class Generic
 {
-    public static function fast_array_filter($array, $pattern)
+    public static function fast_array_filter(array $array, $pattern, $preg_quote = true)
     {
-        $pattern = '/' . preg_quote($pattern) . '/';
+        $pattern = $preg_quote ? '/' . preg_quote($pattern) . '/' : $pattern;
         return preg_grep($pattern, $array);
     }
 
-    public static function fast_array_key_filter($array, $pattern)
+    public static function fast_array_key_filter(array $array, $pattern, $preg_quote = true)
     {
-        $pattern = '/' . preg_quote($pattern) . '/';
+        $pattern = $preg_quote ? '/' . preg_quote($pattern) . '/' : $pattern;
+        var_dump($pattern);
         $keys = preg_grep($pattern, array_keys($array));
         $retArray = array_flip($keys);
         return array_intersect_key($array, $retArray);
+    }
+
+    public static function array_key_filter(array $array, array $keys)
+    {
+        if (empty($keys)) {
+            return $array;
+        }
+        return self::fast_array_key_filter($array, '(' . implode(')|(', $keys) . ')', false);
     }
 }
