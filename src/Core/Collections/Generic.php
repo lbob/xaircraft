@@ -13,14 +13,13 @@ class Generic
 {
     public static function fast_array_filter(array $array, $pattern, $preg_quote = true)
     {
-        $pattern = $preg_quote ? '/' . preg_quote($pattern) . '/' : $pattern;
+        $pattern = '/' . ($preg_quote ? preg_quote($pattern) : $pattern) . '/';
         return preg_grep($pattern, $array);
     }
 
     public static function fast_array_key_filter(array $array, $pattern, $preg_quote = true)
     {
-        $pattern = $preg_quote ? '/' . preg_quote($pattern) . '/' : $pattern;
-        var_dump($pattern);
+        $pattern = '/' . ($preg_quote ? preg_quote($pattern) : $pattern) . '/';
         $keys = preg_grep($pattern, array_keys($array));
         $retArray = array_flip($keys);
         return array_intersect_key($array, $retArray);
