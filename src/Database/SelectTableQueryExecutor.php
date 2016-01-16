@@ -189,8 +189,8 @@ class SelectTableQueryExecutor extends TableQueryExecutor
         $selection = SelectionQueryBuilder::toString($context, $this->selectFields) . ' FROM ' . $this->schema->getSymbol();
         $join = JoinQueryBuilder::toString($context, $this->joins);
         $condition = ConditionQueryBuilder::toString($context, $this->conditions);
-        $orders = OrderQueryBuilder::toString($context, $this->orders);
         $groups = GroupQueryBuilder::toString($context, $this->groups);
+        $orders = OrderQueryBuilder::toString($context, $this->orders);
         $havings = HavingQueryBuilder::toString($context, $this->havings);
 
         $statements = array($selection);
@@ -203,16 +203,16 @@ class SelectTableQueryExecutor extends TableQueryExecutor
             $statements[] = "WHERE $condition";
         }
 
-        if (isset($orders)) {
-            $statements[] = "ORDER BY $orders";
-        }
-
         if (isset($groups)) {
             $statements[] = "GROUP BY $groups";
         }
 
         if (isset($havings)) {
             $statements[] = "HAVING ($havings)";
+        }
+
+        if (isset($orders)) {
+            $statements[] = "ORDER BY $orders";
         }
 
         if (isset($this->limit)) {
