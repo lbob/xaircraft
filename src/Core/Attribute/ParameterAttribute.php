@@ -20,12 +20,15 @@ class ParameterAttribute extends Attribute
 
     private $method;
 
+    private $isArray = false;
+
     public function initialize($value)
     {
-        if (preg_match('#^(?<type>[a-zA-Z][a-zA-Z0-9\_\-]*)[ ]+\$(?<name>[a-zA-Z][a-zA-Z0-9\_\-]*)([ ]+(?<method>([a-zA-Z]+)))?$#i', $value, $match)) {
+        if (preg_match('#^(?<type>\\\?[a-zA-Z][a-zA-Z0-9\_\-]*)(?<arrayize>\[\])?[ ]+\$(?<name>[a-zA-Z][a-zA-Z0-9\_\-]*)([ ]+(?<method>([a-zA-Z]+)))?$#i', $value, $match)) {
             $this->type = array_key_exists('type', $match) ? $match['type'] : null;
             $this->name = array_key_exists('name', $match) ? $match['name'] : null;
             $this->method = array_key_exists('method', $match) ? $match['method'] : null;
+            $this->isArray = array_key_exists('arrayize', $match);
 
             if (!isset($this->method)) {
                 $this->method = self::METHOD_GET;
@@ -78,5 +81,13 @@ class ParameterAttribute extends Attribute
             }
         }
         return null;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isArray()
+    {
+        return $this->isArray;
     }
 }

@@ -63,6 +63,14 @@ class home_controller extends Controller implements OutputStatusException
         var_dump(DB::getQueryLog());
     }
 
+    /**
+     * @param Message[] $messages
+     */
+    public function test_arg(array $messages)
+    {
+        var_dump($messages);
+    }
+
     public function test_sub_query_func()
     {
         $query = DB::table('user')->whereIn('id', function (WhereQuery $whereQuery) {

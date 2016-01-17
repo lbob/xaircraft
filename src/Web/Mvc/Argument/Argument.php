@@ -10,6 +10,7 @@ namespace Xaircraft\Web\Mvc\Argument;
 
 
 use ReflectionParameter;
+use Xaircraft\Core\Attribute\Attribute;
 use Xaircraft\Core\Attribute\AttributeCollection;
 use Xaircraft\Core\Attribute\ParameterAttribute;
 use Xaircraft\Core\Json;
@@ -25,11 +26,14 @@ abstract class Argument
 
     protected $reflectionParameter;
 
-    public function __construct($name, $value, ReflectionParameter $reflectionParameter)
+    protected $attribute;
+
+    public function __construct($name, $value, ReflectionParameter $reflectionParameter, ParameterAttribute $attribute)
     {
         $this->value = $value;
         $this->name = $name;
         $this->reflectionParameter = $reflectionParameter;
+        $this->attribute = $attribute;
 
         $this->initialize();
     }
@@ -37,7 +41,10 @@ abstract class Argument
     private function initialize()
     {
         if ($this->reflectionParameter->isArray()) {
-            $this->value = Json::toArray($this->value);
+            $this->value = Json::toArray(
+                $this->value,
+                $this->attribute->isArray() ? $this->attribute->getType() : null
+            );
         }
         if (!isset($this->value)) {
             if ($this->reflectionParameter->isOptional()) {
@@ -74,10 +81,10 @@ abstract class Argument
                 $arg = null;
                 $attribute = ParameterAttribute::get($attributes, $parameter->name);
                 if (array_key_exists($parameter->name, $posts) && isset($attribute) && $attribute->isPost()) {
-                    $arg = new PostArgument($parameter->name, $posts[$parameter->name], $parameter);
+                    $arg = new PostArgument($parameter->name, $posts[$parameter->name], $parameter, $attribute);
                 }
                 if (array_key_exists($parameter->name, $params) && (!isset($attribute) || $attribute->isGet())) {
-                    $arg = new GetArgument($parameter->name, $params[$parameter->name], $parameter);
+                    $arg = new GetArgument($parameter->name, $params[$parameter->name], $parameter, $attribute);
                 }
                 if (isset($arg)) {
                     $args[$parameter->name] = $arg->getValue();
