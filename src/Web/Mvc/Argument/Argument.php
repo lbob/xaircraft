@@ -28,7 +28,7 @@ abstract class Argument
 
     protected $attribute;
 
-    public function __construct($name, $value, ReflectionParameter $reflectionParameter, ParameterAttribute $attribute)
+    public function __construct($name, $value, ReflectionParameter $reflectionParameter, ParameterAttribute $attribute = null)
     {
         $this->value = $value;
         $this->name = $name;
@@ -43,7 +43,7 @@ abstract class Argument
         if ($this->reflectionParameter->isArray()) {
             $this->value = Json::toArray(
                 $this->value,
-                $this->attribute->isArray() ? $this->attribute->getType() : null
+                isset($this->attribute) && $this->attribute->isArray() ? $this->attribute->getType() : null
             );
         }
         if (!isset($this->value)) {
