@@ -1,4 +1,5 @@
-<?php
+<?php namespace Xair;
+use EmailSender;
 
 /**
  * Created by PhpStorm.
@@ -8,12 +9,12 @@
  */
 class Message
 {
-    public $id = 1;
+    public $id = 2;
 
     public $content = "Hello message.";
 
     /**
-     * @var Test\Hello\Contract
+     * @var \Test\Hello\Contract
      */
     public $contract;
 
