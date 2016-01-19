@@ -289,13 +289,17 @@ class TableQuery implements QueryStringBuilder
         return $this->take($pageSize)->skip($offset);
     }
 
-    public function pluck($field)
+    public function pluck($field = null)
     {
         $this->queryType = self::QUERY_SELECT;
 
         $this->selectQuerySettings['pluck'] = true;
 
-        $this->select($field)->take(1);
+        if (isset($field)) {
+            $this->select($field);
+        }
+
+        $this->take(1);
 
         return $this;
     }

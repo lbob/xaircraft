@@ -63,6 +63,14 @@ class home_controller extends Controller implements OutputStatusException
         var_dump(DB::getQueryLog());
     }
 
+    public function test_sum()
+    {
+        $query = DB::table('user')->select(array(
+            'total_count' => Func::sum('id')
+        ))->pluck()->execute();
+        var_dump($query);
+    }
+
     /**
      * @param \Xair\Message[] $messages
      */
