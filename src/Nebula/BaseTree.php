@@ -43,9 +43,9 @@ trait BaseTree
                     $node[$field] = $item[$field];
                 }
                 if (isset($callback) && is_callable($callback)) {
-                    $state = call_user_func($callback, $state, $node);
+                    $nextState = call_user_func($callback, $state, $node);
                 }
-                $node['children'] = self::makeTrees($item['id'], $selections, $query, $callback, $state);
+                $node['children'] = self::makeTrees($item['id'], $selections, $query, $callback, $nextState);
                 $nodes[] = $node;
             }
             return $nodes;

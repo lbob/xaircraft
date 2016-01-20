@@ -28,7 +28,7 @@ class ParameterAttribute extends Attribute
             $this->type = array_key_exists('type', $match) ? $match['type'] : null;
             $this->name = array_key_exists('name', $match) ? $match['name'] : null;
             $this->method = array_key_exists('method', $match) ? $match['method'] : null;
-            $this->isArray = array_key_exists('arrayize', $match);
+            $this->isArray = array_key_exists('arrayize', $match) && !empty($match['arrayize']);
 
             if (!isset($this->method)) {
                 $this->method = self::METHOD_GET;

@@ -41,6 +41,7 @@ abstract class Argument
     private function initialize()
     {
         if ($this->reflectionParameter->isArray()) {
+            var_dump($this->attribute);
             $this->value = Json::toArray(
                 $this->value,
                 isset($this->attribute) && $this->attribute->isArray() ? $this->attribute->getType() : null

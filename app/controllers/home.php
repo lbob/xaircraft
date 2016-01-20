@@ -72,7 +72,7 @@ class home_controller extends Controller implements OutputStatusException
     }
 
     /**
-     * @param \Xair\Message[] $messages
+     * @param Message[] $messages
      */
     public function test_arg(array $messages)
     {
