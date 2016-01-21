@@ -30,9 +30,10 @@ class WhereInConditionBuilder extends ConditionBuilder
     public function getQueryString(QueryContext $context)
     {
         $field = $this->field->getName($context);
+        $inSymbol = $this->notIn ? "NOT IN" : "IN";
         $statements = array();
         if (!isset($this->clause)) {
-            $statements[] = "$field IN (";
+            $statements[] = "$field $inSymbol (";
                 if (!empty($this->range)) {
                     $values = array();
                     foreach ($this->range as $item) {
@@ -47,7 +48,7 @@ class WhereInConditionBuilder extends ConditionBuilder
         } else {
             $whereQuery = new WhereQuery(true);
             call_user_func($this->clause, $whereQuery);
-            $statements[] = "$field IN (";
+            $statements[] = "$field $inSymbol (";
             $item = $whereQuery->getQueryString($context);
             if (!isset($item)) {
                 throw new QueryException("WhereIn Condition build error.");

@@ -72,11 +72,14 @@ class home_controller extends Controller implements OutputStatusException
     }
 
     /**
-     * @param Message[] $messages
+     * @param array $messages
      */
     public function test_arg(array $messages)
     {
-        var_dump($messages);
+        $query = DB::table('user')->select(array(
+            'id' => Func::sum('id')
+        ))->execute();
+        var_dump($query);
     }
 
     public function test_sub_query_func()
