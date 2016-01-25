@@ -31,6 +31,13 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
+    public function test_result()
+    {
+        $result = DB::table('user')->where('id', 2000)->select()->execute();
+        var_dump($result);
+        return $this->status('SUCCESS', \Xaircraft\Globals::STATUS_SUCCESS, $result);
+    }
+
     /**
      * @param $id
      * @param $title
