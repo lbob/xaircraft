@@ -33,7 +33,7 @@ class CacheAuthStorage implements AuthStorage
 
     public function get()
     {
-        $this->cacheDriver->get($this->currentUserSessionID);
+        return $this->cacheDriver->get($this->currentUserSessionID);
     }
 
     public function clear()
