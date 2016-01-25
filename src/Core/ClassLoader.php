@@ -13,7 +13,9 @@ use Xaircraft\App;
 class ClassLoader extends Container
 {
     private $blackList = array(
-        'PHPUnit_Extensions_Story_TestCase'
+        'PHPUnit_Extensions_Story_TestCase',
+        'PHPUnit_Extensions_Database_TestCase',
+        'PHPUnit_Extensions_SeleniumTestCase'
     );
 
     private $paths = array();

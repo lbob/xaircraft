@@ -36,6 +36,9 @@ class ConsoleLoader extends AppModule
         if (Globals::RUNTIME_MODE_CLI !== App::environment(Globals::ENV_RUNTIME_MODE)) {
             return false;
         }
+        if (stripos($_SERVER['PHP_SELF'], 'phpunit') > 0) {
+            return false; //PHPUnit
+        }
         return true;
     }
 
