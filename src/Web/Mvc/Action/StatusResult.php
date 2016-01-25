@@ -41,7 +41,7 @@ class StatusResult extends ActionResult
         $json['status'] = $this->statusCode;
         $json['message'] = $this->message;
 
-        if (isset($this->data)) {
+        if (isset($this->data) && !empty($this->data)) {
             $json['data'] = $this->data;
         }
 
