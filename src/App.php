@@ -220,10 +220,10 @@ class App extends Container
 
     private function onError(AppModuleException $ex)
     {
-        ExceptionManager::handle($ex);
         Log::error('AppModuleException', $ex->getMessage(), array(
             'code' => $ex->getCode(),
             'trace' => $ex->getTraceAsString()
         ));
+        ExceptionManager::handle($ex);
     }
 }

@@ -45,7 +45,7 @@ class home_controller extends Controller implements OutputStatusException
      * @return \Xaircraft\Web\Mvc\Action\TextResult
      * @output_status_exception
      */
-    public function index($id = 2, $title = 'sdfsf', aray $test = array())
+    public function index($id = 2, $title = 'sdfsf', array $test = array())
     {
         var_dump($id);
         var_dump($title);

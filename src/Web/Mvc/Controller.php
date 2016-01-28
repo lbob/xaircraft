@@ -14,6 +14,7 @@ use Xaircraft\Core\Attribute\AttributeCollection;
 use Xaircraft\Core\Attribute\OutputStatusExceptionAttribute;
 use Xaircraft\DI;
 use Xaircraft\Exception\WebException;
+use Xaircraft\Extensions\Log\Log;
 use Xaircraft\Web\Http\Request;
 use Xaircraft\Web\Mvc\Action\JsonResult;
 use Xaircraft\Web\Mvc\Action\LayoutResult;
@@ -95,6 +96,10 @@ abstract class Controller
                     $actionInfo->getIfOutputStatusException() ||
                     $controller->attributes->exists(OutputStatusExceptionAttribute::class)) {
                     $status = $controller->status($ex->getMessage(), $ex->getCode());
+                    Log::error('OUTPUT_STATUS_EXCEPTION', $ex->getMessage(), array(
+                        'code' => $ex->getCode(),
+                        'trace' => $ex->getTraceAsString()
+                    ));
                     return $status;
                 }
                 throw new WebException($controller, $action, $ex->getMessage(), $ex);

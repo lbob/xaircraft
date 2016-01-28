@@ -33,7 +33,7 @@ class LogAppModule extends AppModule
     {
         $e = error_get_last();
         if (isset($e)) {
-            Log::emergency('SHUTDOWN_FUNCTION', $e['message'], $e);
+            Log::critical('SHUTDOWN_FUNCTION', $e['message'], $e);
         }
     }
 }
