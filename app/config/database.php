@@ -10,7 +10,7 @@ return array(
     'default' => array(
         'driver'    => 'mysql',
         'host'      => 'localhost',
-        'database'  => 'xair_api_doc',
+        'database'  => 'agri_data_center',
         'username'  => 'root',
         'password'  => '',
         'charset'   => 'utf8',
