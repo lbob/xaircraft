@@ -12,6 +12,10 @@
   "require": {
     "php": ">=5.3.0"
   },
+  "require-dev": {
+    "monolog/monolog": "*",
+    "nesbot/Carbon": "*"
+  },
   "autoload": {
     "psr-4": {
       "Xaircraft\\": "src/"

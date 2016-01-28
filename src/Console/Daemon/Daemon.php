@@ -74,10 +74,10 @@ abstract class Daemon
         if (0 === $pid) {
             try {
                 chdir("/");
-                if (!$this->setUser()) {
-                    $this->onStopping();
-                    App::end();
-                }
+//                if (!$this->setUser()) {
+//                    $this->onStopping();
+//                    App::end();
+//                }
                 fclose(STDIN);fclose(STDOUT);fclose(STDERR);
                 $stdin = fopen("/dev/null", "r");
                 $stdout = fopen("/dev/null", "a");

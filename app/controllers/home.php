@@ -11,6 +11,7 @@ use Xaircraft\Database\Func\Func;
 use Xaircraft\Database\WhereQuery;
 use Xaircraft\DB;
 use Xaircraft\DI;
+use Xaircraft\Exception\ModelException;
 use Xaircraft\Nebula\Model;
 use Xaircraft\Web\Mvc\Argument\Post;
 use Xaircraft\Web\Mvc\Controller;
@@ -44,11 +45,13 @@ class home_controller extends Controller implements OutputStatusException
      * @return \Xaircraft\Web\Mvc\Action\TextResult
      * @output_status_exception
      */
-    public function index($id = 2, $title = 'sdfsf', array $test)
+    public function index($id = 2, $title = 'sdfsf', aray $test = array())
     {
         var_dump($id);
         var_dump($title);
         var_dump($test);
+
+        throw new ModelException('test');
 
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('p.id', '>', 0);
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('u.id', '>', 0);

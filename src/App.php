@@ -9,12 +9,15 @@
 
 namespace Xaircraft;
 
+use Monolog\Logger;
 use Xaircraft\Configuration\Settings;
 use Xaircraft\Console\Console;
 use Xaircraft\Console\ConsoleLoader;
 use Xaircraft\Core\Container;
 use Xaircraft\Exception\ConsoleException;
 use Xaircraft\Exception\ExceptionManager;
+use Xaircraft\Extensions\Log\Log;
+use Xaircraft\Extensions\Log\LogAppModule;
 use Xaircraft\Inject\InjectModule;
 use Xaircraft\Module\AppModuleLoader;
 use Xaircraft\Module\AppModuleState;
@@ -180,6 +183,7 @@ class App extends Container
         self::module(InjectModule::class);
         self::module(AppModuleLoader::class);
         self::module(EnvironmentPathModule::class);
+        self::module(LogAppModule::class);
         self::module(WebAppModule::class);
         self::module(ConsoleLoader::class);
     }
@@ -217,5 +221,9 @@ class App extends Container
     private function onError(AppModuleException $ex)
     {
         ExceptionManager::handle($ex);
+        Log::error('AppModuleException', $ex->getMessage(), array(
+            'code' => $ex->getCode(),
+            'trace' => $ex->getTraceAsString()
+        ));
     }
 }
