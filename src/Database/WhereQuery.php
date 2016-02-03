@@ -166,6 +166,11 @@ class WhereQuery implements QueryStringBuilder
         return $this;
     }
 
+    public function top()
+    {
+        return $this->take();
+    }
+
     public function count()
     {
         $this->selectFields = array(FieldInfo::make(Func::count("*"), 'total_count'));
