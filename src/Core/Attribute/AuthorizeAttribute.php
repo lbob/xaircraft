@@ -13,6 +13,7 @@ use Xaircraft\Authentication\Contract\Authorize;
 use Xaircraft\DI;
 use Xaircraft\Exception\AttributeException;
 use Xaircraft\Exception\HttpAuthenticationException;
+use Xaircraft\Globals;
 use Xaircraft\Web\Mvc\HttpAuthCredential;
 
 class AuthorizeAttribute extends Attribute
@@ -56,7 +57,9 @@ class AuthorizeAttribute extends Attribute
         if (isset($authorize) && $authorize instanceof Authorize) {
             try {
                 if (!$authorize->authorize(DI::get(HttpAuthCredential::class))) {
-                    throw new HttpAuthenticationException("Http authorize failure [$this->authorize].");
+                    $code = $authorize->getExceptionCode();
+                    $code = isset($code) ? $code : Globals::EXCEPTION_ERROR_AUTHENTICATION;
+                    throw new HttpAuthenticationException("Http authorize failure [$this->authorize].", $code);
                 }
             } catch (\Exception $ex) {
                 throw new HttpAuthenticationException($ex->getMessage(), $ex);
