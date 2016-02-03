@@ -102,7 +102,7 @@ abstract class Controller
                     ));
                     return $status;
                 }
-                throw new WebException($controller, $action, $ex->getMessage(), $ex);
+                throw new WebException($controller, $action, $ex->getMessage(), $ex->getCode(), $ex);
             }
         }
         return null;

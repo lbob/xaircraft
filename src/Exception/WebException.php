@@ -17,9 +17,9 @@ class WebException extends BaseException
 
     private $action;
 
-    public function __construct($controller, $action, $message = "", \Exception $previous = null)
+    public function __construct($controller, $action, $message = "", $code = Globals::EXCEPTION_ERROR_WEB, \Exception $previous = null)
     {
-        parent::__construct($message, Globals::EXCEPTION_ERROR_WEB, $previous);
+        parent::__construct($message, $code, $previous);
 
         $this->controller = $controller;
         $this->action = $action;
