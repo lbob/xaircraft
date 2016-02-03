@@ -36,6 +36,10 @@ class WhereQuery implements QueryStringBuilder
 
     private $subQueryLimit = false;
 
+    private $skip = false;
+
+    private $skipCount = 0;
+
     public function __construct($subQueryLimit = false)
     {
         $this->subQueryLimit = $subQueryLimit;
@@ -146,10 +150,18 @@ class WhereQuery implements QueryStringBuilder
         return $this;
     }
 
-    public function top()
+    public function take($count = 1)
     {
         $this->limit = true;
-        $this->limitCount = 1;
+        $this->limitCount = $count;
+
+        return $this;
+    }
+
+    public function skip($count = 0)
+    {
+        $this->skip = true;
+        $this->skipCount = $count;
 
         return $this;
     }
@@ -200,6 +212,13 @@ class WhereQuery implements QueryStringBuilder
             $condition = ConditionQueryBuilder::toString($context, $this->conditions);
             if (isset($condition)) {
                 $statements[] = "WHERE " . $condition;
+            }
+            if ($this->limit) {
+                if ($this->skip) {
+                    $statements[] = "LIMIT $this->skipCount, $this->limitCount";
+                } else {
+                    $statements[] = "LIMIT $this->limitCount";
+                }
             }
 
             $context->exitSubQuery();
