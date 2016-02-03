@@ -16,4 +16,6 @@ interface Authorize
      * @return bool
      */
     public function authorize(Credential $credential);
+
+    public function getExceptionCode();
 }
