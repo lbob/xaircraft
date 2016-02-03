@@ -56,6 +56,7 @@ class Globals
     const EXCEPTION_ERROR_LOGIN = 4303;
     //登录过期
     const EXCEPTION_ERROR_LOGIN_EXPIRE = 4304;
+    const EXCEPTION_ERROR_CLIENT = 4305;
 
     const EXCEPTION_ERROR_CONSOLE = 4400;
 
