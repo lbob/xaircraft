@@ -48,6 +48,14 @@ class Globals
     const EXCEPTION_ERROR_ARGUMENT_INVALID = 4202;
 
     const EXCEPTION_ERROR_AUTHENTICATION = 4300;
+    //生成access_token失败
+    const EXCEPTION_ERROR_ACCESS_TOKEN = 4301;
+    //刷新access_token失败
+    const EXCEPTION_ERROR_REFRESH_TOKEN = 4302;
+    //登录失败
+    const EXCEPTION_ERROR_LOGIN = 4303;
+    //登录过期
+    const EXCEPTION_ERROR_LOGIN_EXPIRE = 4304;
 
     const EXCEPTION_ERROR_CONSOLE = 4400;
 
