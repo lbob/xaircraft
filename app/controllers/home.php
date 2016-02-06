@@ -22,8 +22,6 @@ use Xaircraft\Web\Mvc\OutputStatusException;
  * User: lbob
  * Date: 2015/11/12
  * Time: 16:55
- * @auth LoginAuthorize
- * @auth LoginAuthorize2(userID=123, permission='admin;normal.aa')
  */
 class home_controller extends Controller implements OutputStatusException
 {
