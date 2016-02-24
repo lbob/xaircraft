@@ -54,7 +54,11 @@ abstract class Argument
         }
         $class = $this->reflectionParameter->getClass();
         if (isset($class)) {
-            $this->value = Json::toObject($this->value, $class);
+            if ($class->getName() === PostFile::class) {
+                $this->value = new PostFile($this->value);
+            } else {
+                $this->value = Json::toObject($this->value, $class);
+            }
         }
 
         if (!$this->reflectionParameter->allowsNull() && !isset($this->value)) {
@@ -72,7 +76,7 @@ abstract class Argument
         return $this->name;
     }
 
-    public static function createArgs(AttributeCollection $attributes, array $parameters, array $params, array $posts)
+    public static function createArgs(AttributeCollection $attributes, array $parameters, array $params, array $posts, array $files = null)
     {
         $args = array();
         if (!empty($parameters)) {
@@ -85,6 +89,9 @@ abstract class Argument
                 }
                 if (array_key_exists($parameter->name, $params) && (!isset($attribute) || $attribute->isGet())) {
                     $arg = new GetArgument($parameter->name, $params[$parameter->name], $parameter, $attribute);
+                }
+                if (!empty($files)) {
+                    $arg = new FileArgument($parameter->name, $files, $parameter, $attribute);
                 }
                 if (isset($arg)) {
                     $args[$parameter->name] = $arg->getValue();

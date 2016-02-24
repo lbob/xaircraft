@@ -11,6 +11,7 @@ namespace Xaircraft\Web\Http;
 
 use Xaircraft\Core\Collections\Generic;
 use Xaircraft\Core\Strings;
+use Xaircraft\Web\Http\RequestFileInfo;
 
 class Request
 {
@@ -123,5 +124,29 @@ class Request
     {
         $pjax = $this->param('_pjax');
         return ((isset($_SERVER['HTTP_X_PJAX']) && strtolower($_SERVER['HTTP_X_PJAX']) === 'true') || isset($pjax));
+    }
+
+    public function files($keyword = null)
+    {
+        if (isset($_FILES)) {
+            $files = array();
+            foreach ($_FILES as $formKeyword => $filesMeta) {
+                if (isset($keyword) && !strtolower($keyword) === strtolower($formKeyword)) {
+                    continue;
+                }
+                $isArr = is_array($filesMeta['name']);
+                $fileCount = count($filesMeta['name']);
+                for ($i = 0; $i < $fileCount; $i++) {
+                    $fileInfo = new RequestFileInfo();
+                    $fileInfo->name     = $isArr ? $filesMeta['name'][$i] : $filesMeta['name'];
+                    $fileInfo->type     = $isArr ? $filesMeta['type'][$i] : $filesMeta['type'];
+                    $fileInfo->tmp_name = $isArr ? $filesMeta['tmp_name'][$i] : $filesMeta['tmp_name'];
+                    $fileInfo->error    = $isArr ? $filesMeta['error'][$i] : $filesMeta['error'];
+                    $fileInfo->size     = $isArr ? $filesMeta['size'][$i] : $filesMeta['size'];
+                    $files[] = $fileInfo;
+                }
+            }
+            return $files;
+        }
     }
 }

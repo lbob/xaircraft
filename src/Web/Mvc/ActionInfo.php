@@ -49,11 +49,11 @@ class ActionInfo
         $this->initializeAttributes();
     }
 
-    public function invoke(array $params = null, array $posts = null)
+    public function invoke(array $params = null, array $posts = null, array $files = null)
     {
         $this->attributes->invoke();
         $this->controller->attributes->invoke();
-        $args = Argument::createArgs($this->attributes, $this->parameters, $params, $posts);
+        $args = Argument::createArgs($this->attributes, $this->parameters, $params, $posts, $files);
         return $this->reflector->invokeArgs($this->controller, $args);
     }
 
