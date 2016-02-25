@@ -90,7 +90,7 @@ abstract class Argument
                 if (array_key_exists($parameter->name, $params) && (!isset($attribute) || $attribute->isGet())) {
                     $arg = new GetArgument($parameter->name, $params[$parameter->name], $parameter, $attribute);
                 }
-                if (!empty($files)) {
+                if (!isset($arg) && !empty($files)) {
                     $arg = new FileArgument($parameter->name, $files, $parameter, $attribute);
                 }
                 if (isset($arg)) {
