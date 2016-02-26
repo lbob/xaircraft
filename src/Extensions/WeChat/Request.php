@@ -12,9 +12,9 @@ use Xaircraft\Core\Net;
  */
 class Request extends Net {
 
-    public static function get($url, array $params = array())
+    public static function get($url, array $params = array(), $header = false)
     {
-        $content = json_decode(parent::get($url, $params), true);
+        $content = json_decode(parent::get($url, $params, $header), true);
 
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new \Exception("WeChat/Request: JSON Parse ERROR.");
@@ -25,9 +25,9 @@ class Request extends Net {
         return $content;
     }
 
-    public static function post($url, $body, array $params = null)
+    public static function post($url, $body, array $params = null, $header = false)
     {
-        $content = json_decode(parent::post($url, $body, $params), true);
+        $content = json_decode(parent::post($url, $body, $params, $header), true);
 
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new \Exception("WeChat/Request: JSON Parse ERROR.");
@@ -38,9 +38,9 @@ class Request extends Net {
         return $content;
     }
 
-    public static function request($url, array $params = array())
+    public static function request($url, array $params = array(), $header = false)
     {
-        return parent::get($url, $params);
+        return parent::get($url, $params, $header);
     }
 }
 

@@ -39,16 +39,16 @@ class Net {
         return $server_ip;
     }
 
-    public static function get($url, array $params = null)
+    public static function get($url, array $params = null, $header = false)
     {
         $url = self::formatUrl($url, $params);
-        return self::getRequestResult($url);
+        return self::getRequestResult($url, null, $header);
     }
 
-    public static function post($url, $body, array $params = null)
+    public static function post($url, $body, array $params = null, $header = false)
     {
         $url = self::formatUrl($url, $params);
-        return self::getRequestResult($url, $body);
+        return self::getRequestResult($url, $body, $header);
     }
 
     private static function formatUrl($url, array $params = null)
@@ -62,7 +62,7 @@ class Net {
         return $url;
     }
 
-    private static function getRequestResult($url, $postBody = null)
+    private static function getRequestResult($url, $postBody = null, $header = false)
     {
         if (extension_loaded('curl')) {
             $ch = curl_init();
@@ -80,6 +80,9 @@ class Net {
             if(!empty($postBody)){
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
+            }
+            if($header){
+                curl_setopt($ch, CURLOPT_HEADER, 1);
             }
             $res = curl_exec($ch);
             curl_close($ch);

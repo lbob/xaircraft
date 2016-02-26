@@ -29,22 +29,22 @@ abstract class Application {
 
     public abstract function getAppID();
 
-    public final function get($url, array $params = array())
+    public final function get($url, array $params = array(), $header = false)
     {
         $params['ACCESS_TOKEN'] = $this->corporation->getAccessToken();
-        return Request::get($url, $params);
+        return Request::get($url, $params, $header);
     }
 
-    public final function post($url, $body, array $params = array())
+    public final function post($url, $body, array $params = array(), $header = false)
     {
         $params['ACCESS_TOKEN'] = $this->corporation->getAccessToken();
-        return Request::post($url, $body, $params);
+        return Request::post($url, $body, $params, $header);
     }
 
-    public final function request($url, array $params = array())
+    public final function request($url, array $params = array(), $header = false)
     {
         $params['ACCESS_TOKEN'] = $this->corporation->getAccessToken();
-        return Request::request($url, $params);
+        return Request::request($url, $params, $header);
     }
 
     public final function formatBody(array $body = array())

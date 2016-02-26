@@ -1,9 +1,9 @@
 <?php
 
 namespace Xaircraft\Extensions\WeChat;
-use Xaircraft\App;
 use Xaircraft\Cache\CacheDriver;
 use Xaircraft\Configuration\Settings;
+use Xaircraft\Exception\ExceptionHelper;
 
 
 /**
@@ -16,6 +16,7 @@ abstract class Corporation
 {
 
     private $key = 'CORP_KEY_';
+    private $ticketKey = 'TICKET_KEY_';
 
     private $corpid;
 
@@ -30,6 +31,11 @@ abstract class Corporation
      * @var CorpInfo
      */
     private $corpInfo;
+
+    /**
+     * @var JsApiTicket
+     */
+    private $ticketInfo;
 
     public function __construct(CacheDriver $cacheDriver)
     {
@@ -76,6 +82,37 @@ abstract class Corporation
         return null;
     }
 
+    public final function getWeChatSignatureInfo($url)
+    {
+        ExceptionHelper::ThrowIfNullOrEmpty($url, '缺少url');
+        ExceptionHelper::ThrowIfNullOrEmpty($this->getCorpName(), "Invalid CorpName.");
+
+        if ($this->cacheDriver->has($this->ticketKey . $this->getCorpName())) {
+            $this->ticketInfo = unserialize($this->cacheDriver->get($this->ticketKey . $this->getCorpName()));
+        }
+
+        return array(
+            'appId' => $this->option('corpid'),
+            'timestamp' => $this->ticketInfo->timestamp,
+            'nonceStr' => $this->ticketInfo->noncestr,
+            'signature' => $this->getWeChatSignature($url)
+        );
+    }
+
+    private function getWeChatSignature($url)
+    {
+        if (!isset($this->ticketInfo) || (isset($this->ticketInfo) && $this->ticketInfo->expired())) {
+            $this->generateJsApiTicket();
+        }
+
+        $signatureString = "jsapi_ticket={$this->ticketInfo->jsApiTicket}";
+        $signatureString .= "&noncestr={$this->ticketInfo->noncestr}";
+        $signatureString .= "&timestamp={$this->ticketInfo->timestamp}";
+        $signatureString .= "&url={$url}";
+
+        return sha1($signatureString);
+    }
+
     private function generateAccessToken()
     {
         $config = $this->getCorpSecretConfig();
@@ -101,6 +138,31 @@ abstract class Corporation
         $corpInfo->access_token = $result['access_token'];
         $corpInfo->create_at = time();
         return $corpInfo;
+    }
+
+    private function generateJsApiTicket()
+    {
+        $content = Request::get(API::GET_JS_API_TICKET, array('ACCESS_TOKEN' => $this->getAccessToken()));
+        $this->ticketInfo = new JsApiTicket();
+        $this->ticketInfo->noncestr = $this->getNoncestr();
+        $this->ticketInfo->timestamp = time();
+        $this->ticketInfo->jsApiTicket = $content['ticket'];
+        $this->ticketInfo->expiredSeconds = $content['expires_in'] - 200;//提前200秒刷新ticket
+
+        $this->cacheDriver->put($this->ticketKey . $this->getCorpName(), serialize($this->ticketInfo), $this->ticketInfo->expiredSeconds);
+    }
+
+    private function getNoncestr($length = 8)
+    {
+        $str = null;
+        $strPol = "0123456789abcdefghijklmnopqrstuvwxyz";
+        $max = strlen($strPol)-1;
+
+        for($i=0;$i<$length;$i++){
+            $str.=$strPol[rand(0,$max)];
+        }
+
+        return $str;
     }
 }
 
