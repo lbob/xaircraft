@@ -111,7 +111,7 @@ class Media {
         Directory::makeDir(App::path('upload') . $destinationPath);
         ExceptionHelper::ThrowIfNotTrue(file_put_contents(App::path('upload').$destinationPath. $fileName, $stream, true), '文件保存失败');
 
-        return $destinationPath. $fileName;
+        return App::path('upload') . $destinationPath. $fileName;
     }
 
     /**
@@ -123,7 +123,8 @@ class Media {
     {
         $fileName = md5(time().rand(1, 1000)).'tmp';
         foreach(explode("\n", $headers) as $header_value) {
-            if(reset(explode(':', $header_value)) == 'Content-disposition'){
+            $header_pieces = explode(':', $header_value);
+            if(reset($header_pieces) == 'Content-disposition'){
                 $fileNames = explode('"', end($header_pieces));
                 $fileName = $fileNames[1];
                 break;
