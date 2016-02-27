@@ -186,12 +186,12 @@ class SelectTableQueryExecutor extends TableQueryExecutor
             );
         }
 
+        $selection = SelectionQueryBuilder::toString($context, $this->selectFields) . ' FROM ' . $this->schema->getSymbol();
         $join = JoinQueryBuilder::toString($context, $this->joins);
         $condition = ConditionQueryBuilder::toString($context, $this->conditions);
         $groups = GroupQueryBuilder::toString($context, $this->groups);
         $orders = OrderQueryBuilder::toString($context, $this->orders);
         $havings = HavingQueryBuilder::toString($context, $this->havings);
-        $selection = SelectionQueryBuilder::toString($context, $this->selectFields) . ' FROM ' . $this->schema->getSymbol();
 
         $statements = array($selection);
 
