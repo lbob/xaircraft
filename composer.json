@@ -14,8 +14,7 @@
   },
   "require-dev": {
     "monolog/monolog": "*",
-    "nesbot/Carbon": "*",
-    "phpunit/php-invoker": "*"
+    "nesbot/Carbon": "*"
   },
   "autoload": {
     "psr-4": {
