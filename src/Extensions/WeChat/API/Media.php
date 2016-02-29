@@ -9,12 +9,15 @@
 namespace Xaircraft\Extensions\WeChat\API;
 
 
+use TheSeer\DirectoryScanner\Exception;
 use Xaircraft\App;
 use Xaircraft\Core\IO\Directory;
 use Xaircraft\Core\IO\File;
+use Xaircraft\Core\Json;
 use Xaircraft\Exception\ExceptionHelper;
 use Xaircraft\Extensions\WeChat\API;
 use Xaircraft\Extensions\WeChat\Application;
+use Xaircraft\Globals;
 
 class Media {
 
@@ -64,11 +67,14 @@ class Media {
         foreach ($media_ids as $media_id) {
             $result = $this->app->request(API::MEDIA_TEMPORARY, array('media_id' => $media_id), true);
             list($headers, $stream) = explode("\r\n\r\n", $result, 2);
-            $fileName = $this->getHeaderFileName($headers);
-
-            $uris[] = $this->save($stream, $destinationPath, $fileName);
+            try{
+                $data = Json::toArray($stream);
+                throw new \Exception($data['errmsg'], Globals::STATUS_FAILURE);
+            } catch (\Exception $ex){
+                $fileName = $this->getHeaderFileName($headers);
+                $uris[] = $this->save($stream, $destinationPath, $fileName);
+            }
         }
-
         return $uris;
     }
 
@@ -111,7 +117,7 @@ class Media {
         Directory::makeDir(App::path('upload') . $destinationPath);
         ExceptionHelper::ThrowIfNotTrue(file_put_contents(App::path('upload').$destinationPath. $fileName, $stream, true), '文件保存失败');
 
-        return $destinationPath. $fileName;
+        return App::path('upload').$destinationPath. $fileName;
     }
 
     /**
@@ -123,7 +129,8 @@ class Media {
     {
         $fileName = md5(time().rand(1, 1000)).'tmp';
         foreach(explode("\n", $headers) as $header_value) {
-            if(reset(explode(':', $header_value)) == 'Content-disposition'){
+            $header_pieces = explode(':', $header_value);
+            if(reset($header_pieces) == 'Content-disposition'){
                 $fileNames = explode('"', end($header_pieces));
                 $fileName = $fileNames[1];
                 break;
