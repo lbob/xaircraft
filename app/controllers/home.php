@@ -49,24 +49,26 @@ class home_controller extends Controller implements OutputStatusException
         var_dump($title);
         var_dump($test);
 
-        //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('p.id', '>', 0);
+        $query = \Xaircraft\DB::table('user AS u')->select()->join('product AS p', 'p.id', 'u.id')->where('p.id', '>', 0);
         //$query = \Xaircraft\DB::table('user AS u')->select('u.id')->join('project AS p', 'p.id', 'u.id')->where('u.id', '>', 0);
-        $query = \Xaircraft\DB::table('user')->select('name')->whereIn('id', function (WhereQuery $whereQuery) {
-            $whereQuery->select('name')->from('company')->where('id', 9);
-        })->groupBy('user.id', 'user.name')->having('user.id', 0);
+//        $query = \Xaircraft\DB::table('user')->select('name')->whereIn('id', function (WhereQuery $whereQuery) {
+//            $whereQuery->select('name')->from('company')->where('id', 9);
+//        })->groupBy('user.id', 'user.name')->having('user.id', 0);
 //        $query = DB::table('user')->update(array(
 //            'name' => '5',
 //            'password' => 'adf',
 //            'level' => 'admin'
 //        ))->where('id', 9);
 
-        $result = $query->execute();
-        //$queryString = $query->getQueryString();
+        //$result = $query->execute();
+        $queryString = $query->getQueryString();
 
-        var_dump($result);
-        //var_dump($queryString);
+        //var_dump($result);
+        var_dump($queryString);
 
         var_dump(DB::getQueryLog());
+
+
     }
 
     public function test_sum()
