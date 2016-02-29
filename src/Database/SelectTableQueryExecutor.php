@@ -186,6 +186,13 @@ class SelectTableQueryExecutor extends TableQueryExecutor
             );
         }
 
+        if (!empty($this->joins)) {
+            /** @var JoinInfo $join */
+            foreach ($this->joins as $join) {
+                $context->schema($join->schema);
+            }
+        }
+
         $selection = SelectionQueryBuilder::toString($context, $this->selectFields) . ' FROM ' . $this->schema->getSymbol();
         $join = JoinQueryBuilder::toString($context, $this->joins);
         $condition = ConditionQueryBuilder::toString($context, $this->conditions);
