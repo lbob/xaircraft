@@ -225,7 +225,7 @@ abstract class Model extends Container
         $model->loadData($query);
 
         if (is_numeric($arg) && !$model->isExists()) {
-            throw new ModelException("Record not exists.");
+            throw new ModelException("Record not exists. [" . get_called_class() . ":" . $model->schema->getName() . "]");
         }
 
         return $model;
