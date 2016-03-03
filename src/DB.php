@@ -85,8 +85,9 @@ class DB {
     {
         if (self::$processMode) {
             self::$instances[self::getPID()] = array();
-            self::$instances[self::getPID()][self::$currentDatabase] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), self::$currentDatabase);
-            return self::$instances[self::getPID()][self::$currentDatabase];
+            self::$instances[self::getPID()][$database] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), $database);
+            self::$currentDatabase = $database;
+            return self::$instances[self::getPID()][$database];
         } else {
             if (!isset(self::$instances) || !array_key_exists($database, self::$instances) || self::$currentDatabase !== $database) {
                 self::$instances[$database] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), $database);
