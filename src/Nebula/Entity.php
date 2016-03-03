@@ -158,7 +158,13 @@ class Entity
 
     public function __get($field)
     {
-        return !empty($this->fields) && array_key_exists($field, $this->fields) ? $this->fields[$field] : null;
+        $value = !empty($this->fields) && array_key_exists($field, $this->fields) ? $this->fields[$field] : null;
+        if (!isset($value)) {
+            if ($this->autoIncrementField == $field) {
+                $value = 0;
+            }
+        }
+        return $value;
     }
 
     public function __set($field, $value)
