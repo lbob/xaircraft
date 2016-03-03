@@ -5,6 +5,7 @@ use Xaircraft\App;
 use Xaircraft\Console\Command;
 use Xaircraft\Console\Console;
 use Xaircraft\Console\Process;
+use Xaircraft\DB;
 use Xaircraft\Exception\ConsoleException;
 use Xaircraft\Exception\DaemonException;
 use Xaircraft\Globals;
@@ -30,6 +31,8 @@ class DaemonCommand extends Command
         if (function_exists("gc_enable")) {
             gc_enable();
         }
+
+        DB::processModeOn();
 
         $daemon = DaemonFactory::create($_SERVER['argc'], $_SERVER['argv']);
 

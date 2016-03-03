@@ -20,6 +20,8 @@ class DB {
 
     private static $currentDatabase = 'default';
 
+    private static $processMode = false;
+
     /**
      * @var \Xaircraft\Database\Database
      */
@@ -81,11 +83,17 @@ class DB {
      */
     private static function getInstance($database)
     {
-        if (!isset(self::$instances) || !array_key_exists($database, self::$instances) || self::$currentDatabase !== $database) {
-            self::$instances[$database] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), $database);
-            self::$currentDatabase = $database;
+        if (self::$processMode) {
+            self::$instances[self::getPID()] = array();
+            self::$instances[self::getPID()][self::$currentDatabase] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), self::$currentDatabase);
+            return self::$instances[self::getPID()][self::$currentDatabase];
+        } else {
+            if (!isset(self::$instances) || !array_key_exists($database, self::$instances) || self::$currentDatabase !== $database) {
+                self::$instances[$database] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), $database);
+                self::$currentDatabase = $database;
+            }
+            return self::$instances[$database];
         }
-        return self::$instances[$database];
     }
 
     private static function create($provider, $database)
@@ -96,6 +104,21 @@ class DB {
             default:
                 return new DB(new PdoDatabase(), $database);
         }
+    }
+
+    private static function getPID()
+    {
+        return 'process_' . posix_getgid();
+    }
+
+    public static function processModeOn()
+    {
+        self::$processMode = true;
+    }
+
+    public static function processModeOff()
+    {
+        self::$processMode = false;
     }
 
     /**
