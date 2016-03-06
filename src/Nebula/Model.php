@@ -240,6 +240,10 @@ abstract class Model extends Container
         /** @var Model $model */
         $model = self::model();
 
+        if (array_key_exists($model->schema->getAutoIncrementField(), $fields)) {
+            $model = self::find($fields[$model->schema->getAutoIncrementField()]);
+        }
+
         foreach ($fields as $key => $value) {
             if (false !== array_search($key, $model->schema->columns())) {
                 $model->$key = $fields[$key];
@@ -247,6 +251,21 @@ abstract class Model extends Container
         }
 
         return $model;
+    }
+
+    /**
+     * @param array $rows
+     * @return Model[]
+     */
+    public static function loadFromRows(array $rows)
+    {
+        $result = array();
+        if (!empty($rows)) {
+            foreach ($rows as $item) {
+                $result[] = self::load($item);
+            }
+        }
+        return $result;
     }
 
     public function __get($field)
