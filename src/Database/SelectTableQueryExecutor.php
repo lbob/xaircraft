@@ -11,6 +11,7 @@ namespace Xaircraft\Database;
 
 use Xaircraft\Database\Condition\WhereConditionBuilder;
 use Xaircraft\Database\Data\FieldFormatInfo;
+use Xaircraft\Database\Data\FieldFormatter;
 use Xaircraft\Database\Data\FieldType;
 use Xaircraft\Database\Data\NumberFieldType;
 use Xaircraft\Database\Data\TextFieldType;
@@ -157,23 +158,26 @@ class SelectTableQueryExecutor extends TableQueryExecutor
 
     private function formatConvert($row, $value, $format)
     {
+        $argument = null;
         if (is_callable($format)) {
             $result = call_user_func($format, $value, $row);
             return $result;
-        } else {
-            switch ($format) {
-                case FieldType::TEXT:
-                    $convert = new TextFieldType();
-                    return $convert->convert($value);
-                case FieldType::NUMBER:
-                    $convert = new NumberFieldType();
-                    return $convert->convert($value);
-                case FieldType::DATE:
-                    $convert = new TimestampFieldType();
-                    return $convert->convert($value);
-                default:
-                    return $value;
-            }
+        } else if ($format instanceof FieldFormatter) {
+            $argument = $format->getArgument();
+            $format = $format->getFieldType();
+        }
+        switch ($format) {
+            case FieldType::TEXT:
+                $convert = new TextFieldType();
+                return $convert->convert($value, $argument);
+            case FieldType::NUMBER:
+                $convert = new NumberFieldType();
+                return $convert->convert($value, $argument);
+            case FieldType::DATE:
+                $convert = new TimestampFieldType();
+                return $convert->convert($value, $argument);
+            default:
+                return $value;
         }
     }
 

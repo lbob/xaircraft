@@ -14,6 +14,10 @@ class TimestampFieldType extends FieldType
 
     public function convert($value, $args = null)
     {
+        if ($value === 0) {
+            return 0;
+        }
+
         if (!isset($args)) {
             $args = "Y-m-d H:i:s";
         }

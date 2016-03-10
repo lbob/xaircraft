@@ -6,6 +6,7 @@ use Xaircraft\Authentication\Contract\CurrentUser;
 use Xaircraft\Core\IO\File;
 use Xaircraft\Core\Json;
 use Xaircraft\Core\Strings;
+use Xaircraft\Database\Data\FieldFormatter;
 use Xaircraft\Database\Data\FieldType;
 use Xaircraft\Database\Func\Func;
 use Xaircraft\Database\WhereQuery;
@@ -69,6 +70,16 @@ class home_controller extends Controller implements OutputStatusException
         var_dump(DB::getQueryLog());
 
 
+    }
+
+    public function test_format()
+    {
+        $query = DB::table('user')->select(array(
+            'create_at' => 0
+        ))->format(array(
+            'create_at' => FieldFormatter::create(FieldType::DATE, 'Y年m月d日')
+        ))->execute();
+        var_dump($query);
     }
 
     public function test_sum()
