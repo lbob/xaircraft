@@ -75,7 +75,7 @@ class home_controller extends Controller implements OutputStatusException
     public function test_format()
     {
         $query = DB::table('user')->select(array(
-            'create_at' => 0
+            'create_at' => 1
         ))->format(array(
             'create_at' => FieldFormatter::create(FieldType::DATE, 'Y年m月d日')
         ))->execute();

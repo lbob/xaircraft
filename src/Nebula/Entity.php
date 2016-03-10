@@ -87,7 +87,7 @@ class Entity
 
     public function fields(array $fieldFilter = null)
     {
-        return Generic::array_key_filter($this->fields, $fieldFilter);
+        return Generic::array_key_filter($this->fields, $fieldFilter, true);
     }
 
     public function isExists()

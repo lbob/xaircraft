@@ -25,11 +25,11 @@ class Generic
         return array_intersect_key($array, $retArray);
     }
 
-    public static function array_key_filter(array $array = null, array $keys = null)
+    public static function array_key_filter(array $array = null, array $keys = null, $wholeWord = false)
     {
         if (empty($keys)) {
             return $array;
         }
-        return self::fast_array_key_filter($array, '(' . implode(')|(', $keys) . ')', false);
+        return self::fast_array_key_filter($array, $wholeWord ? '^(' : '(' . implode(')|(', $keys) . $wholeWord ? ')$' : ')', false);
     }
 }
