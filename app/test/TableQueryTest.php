@@ -30,6 +30,11 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
             }
         ));
         var_dump($query->getQueryString());
-        ob_flush();
+    }
+
+    public function testSelectionQuery()
+    {
+        $query = DB::table('user')->select(array());
+        var_dump($query->getQueryString());
     }
 }

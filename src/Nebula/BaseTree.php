@@ -39,8 +39,12 @@ trait BaseTree
             $nodes = array();
             foreach ($children as $item) {
                 $node = array();
-                foreach ($selections as $field) {
-                    $node[$field] = $item[$field];
+                if (!empty($selections)) {
+                    foreach ($selections as $field) {
+                        $node[$field] = $item[$field];
+                    }
+                } else {
+                    $node = $item;
                 }
                 if (isset($callback) && is_callable($callback)) {
                     $nextState = call_user_func($callback, $state, $node);

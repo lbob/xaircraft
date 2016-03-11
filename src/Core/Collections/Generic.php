@@ -30,6 +30,6 @@ class Generic
         if (empty($keys)) {
             return $array;
         }
-        return self::fast_array_key_filter($array, $wholeWord ? '^(' : '(' . implode(')|(', $keys) . $wholeWord ? ')$' : ')', false);
+        return self::fast_array_key_filter($array, ($wholeWord ? '^(' : '(') . implode(')|(', $keys) . ($wholeWord ? ')$' : ')'), false);
     }
 }
