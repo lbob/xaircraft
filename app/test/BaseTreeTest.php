@@ -12,7 +12,7 @@ class BaseTreeTest extends PHPUnit_Framework_TestCase
     public function testMakeTree()
     {
         $children = array();
-        Group::makeTrees(1, array(), null, function ($state, $node) use (&$children) {
+        Group::makeTrees(1, null, null, function ($state, $node) use (&$children) {
             /** @var Group $current */
             $children[] = Group::load($node);
         });

@@ -16,7 +16,7 @@ use Xaircraft\DI;
 
 trait BaseTree
 {
-    public static function children($parentID, array $selections, TableQuery $query = null)
+    public static function children($parentID, array $selections = null, TableQuery $query = null)
     {
         /** @var Model $model */
         $model = DI::get(__CLASS__);
@@ -31,7 +31,7 @@ trait BaseTree
             ->execute();
     }
 
-    public static function makeTrees($parentID, array $selections, TableQuery $query = null, $callback = null, $state = null)
+    public static function makeTrees($parentID, array $selections = null, TableQuery $query = null, $callback = null, $state = null)
     {
         $children = self::children($parentID, $selections, $query);
 
