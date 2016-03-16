@@ -30,4 +30,9 @@ class Func
     {
         return new SumFieldFunction($field);
     }
+
+    public static function convert($field, $type)
+    {
+        return new ConvertFieldFunction($field, $type);
+    }
 }

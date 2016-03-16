@@ -1,4 +1,7 @@
 <?php
+use Xaircraft\Database\Func\ConvertFieldFunction;
+use Xaircraft\Database\Func\Func;
+use Xaircraft\Database\OrderInfo;
 use Xaircraft\Database\WhereQuery;
 use Xaircraft\DB;
 
@@ -35,6 +38,15 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
     public function testSelectionQuery()
     {
         $query = DB::table('user')->select(array());
+        var_dump($query->getQueryString());
+    }
+
+    /**
+     *
+     */
+    public function testOrderFieldFunction()
+    {
+        $query = DB::table('user')->select()->orderBy(Func::convert('id', ConvertFieldFunction::USING_GBK), OrderInfo::SORT_DESC);
         var_dump($query->getQueryString());
     }
 }

@@ -237,7 +237,15 @@ class DB {
         $logs = array();
         if (isset(self::$instances) && !empty(self::$instances)) {
             foreach (self::$instances as $instance) {
-                $logs[$instance->provider->getDatabaseName()] = $instance->provider->getQueryLog();
+                if ($instance instanceof DB) {
+                    $logs[$instance->provider->getDatabaseName()] = $instance->provider->getQueryLog();
+                } else {
+                    if (!empty($instance)) {
+                        foreach ($instance as $item) {
+                            $logs[$item->provider->getDatabaseName()] = $item->provider->getQueryLog();
+                        }
+                    }
+                }
             }
         }
         return $logs;
