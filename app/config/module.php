@@ -8,3 +8,4 @@
 
 //\Xaircraft\App::module(WhoopsModule::class);
 //\Xaircraft\App::module(UbenchModule::class);
+//\Xaircraft\App::module(UnitTestModule::class);

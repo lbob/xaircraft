@@ -16,6 +16,6 @@ class BaseTreeTest extends PHPUnit_Framework_TestCase
             /** @var Group $current */
             $children[] = Group::load($node);
         });
-        var_dump($children);
+        //var_dump($children);
     }
 }

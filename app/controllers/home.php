@@ -31,6 +31,14 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
+    /**
+     * @param array $a POST
+     */
+    public function test_argument(array $a)
+    {
+        var_dump($a);
+    }
+
     public function test_result()
     {
         $result = DB::table('user')->where('id', 2000)->select()->execute();

@@ -21,8 +21,7 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
     public function testWhereCondition()
     {
         $query = DB::table('user')->where('id', '<>', 0)->select();
-        var_dump($query->getQueryString());
-        ob_flush();
+        //var_dump($query->getQueryString());
     }
 
     public function testWhereQuery()
@@ -32,13 +31,13 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
                 $whereQuery->select('id')->from('product_definition')->take();
             }
         ));
-        var_dump($query->getQueryString());
+        //var_dump($query->getQueryString());
     }
 
     public function testSelectionQuery()
     {
         $query = DB::table('user')->select(array());
-        var_dump($query->getQueryString());
+        //var_dump($query->getQueryString());
     }
 
     /**
@@ -47,6 +46,17 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
     public function testOrderFieldFunction()
     {
         $query = DB::table('user')->select()->orderBy(Func::convert('id', ConvertFieldFunction::USING_GBK), OrderInfo::SORT_DESC);
-        var_dump($query->getQueryString());
+        //var_dump($query->getQueryString());
+    }
+
+    public function testUnitModule()
+    {
+        $count = DB::table('crop')->where('name', 'unit_test')->count()->execute();
+        var_dump($count);
+
+        $result = DB::table('crop')->insert(array(
+            'name' => 'unit_test'
+        ))->execute();
+        var_dump($result);
     }
 }

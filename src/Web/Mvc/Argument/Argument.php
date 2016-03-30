@@ -41,10 +41,12 @@ abstract class Argument
     private function initialize()
     {
         if ($this->reflectionParameter->isArray()) {
-            $this->value = Json::toArray(
-                $this->value,
-                isset($this->attribute) && $this->attribute->isArray() ? $this->attribute->getType() : null
-            );
+            if (!is_array($this->value)) {
+                $this->value = Json::toArray(
+                    $this->value,
+                    isset($this->attribute) && $this->attribute->isArray() ? $this->attribute->getType() : null
+                );
+            }
         }
         if (!isset($this->value)) {
             if ($this->reflectionParameter->isOptional()) {
