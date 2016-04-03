@@ -35,4 +35,14 @@ class Func
     {
         return new ConvertFieldFunction($field, $type);
     }
+
+    public static function isNull($field)
+    {
+        return new IsNullFieldFunction($field);
+    }
+
+    public static function isNotNull($field)
+    {
+        return new IsNotNullFieldFunction($field);
+    }
 }
