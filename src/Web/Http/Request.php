@@ -87,6 +87,17 @@ class Request
         }
     }
 
+    public function get($key, $default = null)
+    {
+        if (array_key_exists($key, $this->params())) {
+            return $this->param($key);
+        }
+        if (array_key_exists($key, $this->posts())) {
+            return $this->posts($key);
+        }
+        return $default;
+    }
+
     public function header($key)
     {
         if (empty($this->headers)) {
