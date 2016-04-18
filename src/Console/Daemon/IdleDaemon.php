@@ -16,25 +16,21 @@ use Xaircraft\Core\IO\File;
 
 class IdleDaemon extends Daemon
 {
-
-    public function handle()
+    public function onWorkerProcess()
     {
-        $status = file_get_contents('/proc/' . $this->getPid() . '/status');
-        //$this->log('test', $status);
-        Process::fork(function () {
-            sleep(3);
-            $this->log('child process', 'from child process.' . posix_getpid());
+        $this->fork(function () {
+            throw new \Exception("test");
         });
-        sleep(30);
+        sleep(3);
     }
 
-    public function beforeStart()
+    public function getWorkerName()
     {
-
+        return "idle";
     }
 
-    public function beforeStop()
+    public function getWorkerRestartLimit()
     {
-
+        return 3;
     }
 }

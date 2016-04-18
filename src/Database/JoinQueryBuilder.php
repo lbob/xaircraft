@@ -9,6 +9,8 @@
 namespace Xaircraft\Database;
 
 
+use Xaircraft\DB;
+
 class JoinQueryBuilder
 {
     public static function toString(QueryContext $context, array $joins)
@@ -31,7 +33,7 @@ class JoinQueryBuilder
             call_user_func($join->clause, $joinQuery);
             $conditions = $joinQuery->getConditions();
             if (!$joinQuery->getSoftDeleteLess() && $join->schema->getSoftDelete()) {
-                $conditions[] = JoinConditionInfo::make(ConditionInfo::CONDITION_AND, TableSchema::SOFT_DELETE_FIELD, '=', 0, false);
+                $conditions[] = JoinConditionInfo::make(ConditionInfo::CONDITION_AND, $join->schema->getName() . '.' . TableSchema::SOFT_DELETE_FIELD, '=', DB::raw(0), false);
             }
         } else {
             $conditions[] = $join->condition;
@@ -57,8 +59,13 @@ class JoinQueryBuilder
                 }
                 if (!$item->whereCondition) {
                     $field = FieldInfo::make($item->onField);
-                    $value = FieldInfo::make($item->onValue);
-                    $items[] = $field->getName($context) . " $item->onOperator " . $value->getName($context);
+                    if ($item->onValue instanceof Raw) {
+                        $value = $item->onValue->getValue();
+                    } else {
+                        $value = FieldInfo::make($item->onValue);
+                        $value = $value->getName($context);
+                    }
+                    $items[] = $field->getName($context) . " $item->onOperator " . $value;
                 } else {
                     if ($item->onValue instanceof Raw) {
                         $items[] = "$item->onField $item->onOperator " . $item->onValue->getValue();

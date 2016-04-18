@@ -1,5 +1,6 @@
 <?php
 use Account\User;
+use Location\Polygon;
 use Xaircraft\Async\Job;
 use Xaircraft\Authentication\Auth;
 use Xaircraft\Authentication\Contract\CurrentUser;
@@ -13,6 +14,7 @@ use Xaircraft\Database\WhereQuery;
 use Xaircraft\DB;
 use Xaircraft\DI;
 use Xaircraft\Exception\ModelException;
+use Xaircraft\Extensions\Log\Log;
 use Xaircraft\Nebula\Model;
 use Xaircraft\Web\Mvc\Argument\Post;
 use Xaircraft\Web\Mvc\Controller;
@@ -32,15 +34,19 @@ class home_controller extends Controller implements OutputStatusException
     }
 
     /**
-     * @param array $a POST
+     * @param array $a
      */
     public function test_argument(array $a)
     {
         var_dump($a);
+        Log::debug('TEST', 'TEST');
     }
 
     public function test_result()
     {
+        Common::test();
+        $log = new Monolog\Logger('test');
+        var_dump($log);
         $result = DB::table('user')->where('id', 2000)->select()->execute();
         var_dump($result);
         return $this->status('SUCCESS', \Xaircraft\Globals::STATUS_SUCCESS, $result);

@@ -18,6 +18,21 @@ class TableQueryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(true);
     }
 
+    public function testPluck()
+    {
+        $query = DB::table('user')->pluck(array('total' => Func::count('id')))->execute();
+        var_dump($query);
+    }
+
+    public function testJoin()
+    {
+        $query = DB::table('user')->join('product', function (\Xaircraft\Database\JoinQuery $joinQuery) {
+            $joinQuery->on('user.id', 'product.create_by');
+        })->select('user.id', 'name', 'username', 'serial_number');
+
+        var_dump($query->getQueryString());
+    }
+
     public function testWhereCondition()
     {
         $query = DB::table('user')->where('id', '<>', 0)->select();
