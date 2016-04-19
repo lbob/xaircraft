@@ -247,7 +247,7 @@ class WorkerProcessContainer
     protected static function displayUI()
     {
         $content = "\033[1A\n\033[K-----------------------------\033[47;30m XAIRCRAFT \033[0m--------------------------------------------\n\033[0m";
-        $content .= 'XAIRCRAFT DAEMON version:' . self::VERSION . "          PHP version:" . PHP_VERSION . "\n";
+        $content .= 'XAIRCRAFT DAEMON version:' . self::VERSION . "            PHP version:" . PHP_VERSION . "\n";
         $content .= "------------------------------\033[47;30m WORKERS \033[0m---------------------------------------------\n";
         $content .= "\033[47;30mpid\033[0m" . str_pad('', 7 - strlen('pid'));
         $content .= "\033[47;30mworker\033[0m" . str_pad('', 14 - strlen('worker'));

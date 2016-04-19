@@ -252,6 +252,7 @@ abstract class Worker
 
         $this->log("stopped.");
         $this->status = self::STATUS_SHUTDOWN;
+        $this->writeStatus();
 
         exit(250);
     }

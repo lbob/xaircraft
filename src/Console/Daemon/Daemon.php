@@ -28,6 +28,8 @@ abstract class Daemon extends Worker
         $this->sync = $sync;
     }
 
+    public abstract function getMonitorPort();
+
     public function start()
     {
         if (empty($this->args)) {
@@ -51,7 +53,7 @@ abstract class Daemon extends Worker
         }
         switch ($this->args[0]) {
             case 'start':
-                WorkerProcessContainer::run($this->name, array($this, new MonitorWorker(array())), !$this->sync);
+                WorkerProcessContainer::run($this->name, array($this, new MonitorWorker($this->name, array(), $this->getMonitorPort())), !$this->sync);
                 break;
             case 'status':
                 $this->status();

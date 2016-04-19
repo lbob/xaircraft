@@ -40,4 +40,9 @@ class IdleDaemon extends Daemon
     {
         return 3;
     }
+
+    public function getMonitorPort()
+    {
+        return 998;
+    }
 }
