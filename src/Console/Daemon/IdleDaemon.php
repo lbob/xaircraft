@@ -18,10 +18,17 @@ class IdleDaemon extends Daemon
 {
     public function onWorkerProcess()
     {
-        $this->fork(function () {
-            throw new \Exception("test");
-        });
-        sleep(3);
+        declare (ticks = 2) {
+            $this->fork(function () {
+                $this->log("TEST" . time());
+                sleep(10);
+            });
+            $this->fork(function () {
+                $this->log("TEST" . time());
+                sleep(10);
+            });
+            sleep(10);
+        }
     }
 
     public function getWorkerName()

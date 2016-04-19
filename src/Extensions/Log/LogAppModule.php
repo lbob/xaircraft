@@ -16,6 +16,7 @@ class LogAppModule extends AppModule
 
     public function appStart()
     {
+        error_reporting(E_ALL);
         register_shutdown_function(array($this, 'shutdownFunction'));
     }
 

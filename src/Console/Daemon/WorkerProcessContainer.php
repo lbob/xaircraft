@@ -36,6 +36,8 @@ class WorkerProcessContainer
 
     public static $stdoutFile = '/dev/null';
 
+    public static $name = '';
+
     protected static $workers = array();
 
     protected static $workerRestartCount = array();
@@ -46,15 +48,16 @@ class WorkerProcessContainer
 
     protected static $callClass;
 
-    public static function run(array $workers, $daemonize = false)
+    public static function run($name, array $workers, $daemonize = false)
     {
         self::$daemonize = $daemonize;
         self::$status = Worker::STATUS_STARTING;
+        self::$name = $name;
 
         self::init();
         self::daemonize();
         self::saveMasterPid();
-        self::setProcessTitle("Xaircraft: worker process container start_class = " . get_called_class());
+        //self::setProcessTitle("Xaircraft: worker process container start_class = " . get_called_class());
         self::installSignal();
         self::registerTicks();
         self::initWorkers($workers);
@@ -64,12 +67,30 @@ class WorkerProcessContainer
         self::stopAll();
     }
 
+    public static function getPidFile($name)
+    {
+        $path = App::path('cache') .
+            '/daemon/' .
+            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/pid.dat';
+
+        return $path;
+    }
+
+    public static function getStatusFile($name)
+    {
+        $path = App::path('cache') .
+            '/daemon/' .
+            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/status.dat';
+
+        return $path;
+    }
+
     protected static function init()
     {
         self::$callClass = "container_" . get_called_class();
         self::$baseFolder = App::path('cache') .
             '/daemon/' .
-            Strings::camelToSnake(str_replace('\\', '_', self::$callClass));
+            Strings::camelToSnake(str_replace('\\', '_', self::$callClass)) . '/' . self::$name;
         self::$startAt = time();
         self::$logFile = self::$baseFolder . "/log/" . date("Y-m-d") . ".log";
         self::$statusFile = self::$baseFolder . "/status.dat";
@@ -162,10 +183,10 @@ class WorkerProcessContainer
                             if ($restartCount < $worker->restartLimit) {
                                 self::forkOneWorker(self::$workers[$pid]);
                                 self::$workerRestartCount[self::$workers[$pid]->name]++;
-                                self::log("LOG_RESTART_COUNT:" . self::$workerRestartCount[self::$workers[$pid]->name]);
+                                self::log(self::$workers[$pid]->name . "_LOG_RESTART_COUNT:" . self::$workerRestartCount[self::$workers[$pid]->name]);
+                                unset(self::$workers[$pid]);
                             }
                         }
-                        self::log("1子进程已退出,PID:$pid;STATUS:$status, 继续等待子进程退出");
                     } else {
                         break;
                     }
@@ -176,13 +197,16 @@ class WorkerProcessContainer
         }
     }
 
-    protected static function registerTicks()
+    public static function registerTicks()
     {
-        register_tick_function(self::$callClass, "tickHandler");
+        register_tick_function(function () {
+            pcntl_signal_dispatch();
+        });
     }
 
     protected static function initWorkers(array $workers)
     {
+        self::$status = Worker::STATUS_RUNNING;
         if (!empty($workers)) {
             foreach ($workers as $worker) {
                 self::$workerRestartCount[$worker->name] = 0;
@@ -213,11 +237,6 @@ class WorkerProcessContainer
         }
     }
 
-    public static function tickHandler()
-    {
-        pcntl_signal_dispatch();
-    }
-
     protected static function log($msg)
     {
         $msg = $msg . "\n";
@@ -227,56 +246,58 @@ class WorkerProcessContainer
 
     protected static function displayUI()
     {
-        echo "\033[1A\n\033[K-----------------------\033[47;30m XAIRCRAFT \033[0m------------------------------\n\033[0m";
-        echo 'XAIRCRAFT DAEMON version:', self::VERSION, "          PHP version:", PHP_VERSION, "\n";
-        echo "------------------------\033[47;30m WORKERS \033[0m-------------------------------\n";
-        echo "\033[47;30muser\033[0m", str_pad('', 14 - strlen('user')),
-        "\033[47;30mworker\033[0m", str_pad('', 14 - strlen('worker')),
-        "\033[47;30mrestart\033[0m", str_pad('', 14 - strlen('restart')),
-        "\033[47;30mshutdown\033[0m", str_pad('', 14 - strlen('shutdown')),
-        "\033[47;30mstatus\033[0m", str_pad('', 14 - strlen('status')),
-        "\033[47;30mstart_at\033[0m", str_pad('', 14 - strlen('start_at')),
-        "\033[47;30mprocesses\033[0m \033[47;30m", "status\033[0m\n";
+        $content = "\033[1A\n\033[K-----------------------------\033[47;30m XAIRCRAFT \033[0m--------------------------------------------\n\033[0m";
+        $content .= 'XAIRCRAFT DAEMON version:' . self::VERSION . "          PHP version:" . PHP_VERSION . "\n";
+        $content .= "------------------------------\033[47;30m WORKERS \033[0m---------------------------------------------\n";
+        $content .= "\033[47;30mpid\033[0m" . str_pad('', 7 - strlen('pid'));
+        $content .= "\033[47;30mworker\033[0m" . str_pad('', 14 - strlen('worker'));
+        $content .= "\033[47;30mrestart\033[0m" . str_pad('', 9 - strlen('restart'));
+        $content .= "\033[47;30mshutdown\033[0m" . str_pad('', 10 - strlen('shutdown'));
+        $content .= "\033[47;30mstart_at\033[0m" . str_pad('', 21 - strlen('start_at'));
+        $content .= "\033[47;30mprocesses\033[0m \033[47;30m" . "status\033[0m\n";
 
         /** @var Worker $worker */
         foreach (self::$workers as $pid => $worker) {
-            posix_kill($pid, SIGUSR1);
+            if (!posix_kill($pid, SIGUSR1)) {
+                self::log("kill -SIGUSR1 $pid fail.");
+            } else {
+                self::log("kill -SIGUSR1 $pid success.");
+            }
+            sleep(3);
 
-            $content = file_get_contents($worker->statusFile);
-            if (isset($content)) {
+            $statusContent = file_get_contents($worker->statusFile);
+            if (isset($statusContent)) {
                 /** @var WorkerStatus $status */
-                $status = Json::toObject($content, WorkerStatus::class);
+                $status = Json::toObject($statusContent, WorkerStatus::class);
                 if ($status) {
-                    echo str_pad($worker->user, 14),
-                    str_pad($worker->name, 14),
-                    str_pad(self::$workerRestartCount[$worker->name], 14),
-                    str_pad($status->shutdown_process_count, 14),
-                    str_pad($status->status, 14),
-                    str_pad($status->start_at, 14),
-                    str_pad(' ' . $status->process_count, 9),
-                    " \033[32;40m [OK] \033[0m\n";
+                    $content .= str_pad($pid, 7);
+                    $content .= str_pad($worker->name, 14);
+                    $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
+                    $content .= str_pad($status->shutdown_process_count, 10);
+                    $content .= str_pad(date('Y-d-m H:i:s', $status->start_at), 21);
+                    $content .= str_pad($status->process_count, 9);
+                    $content .= "\033[32;40m [" . Worker::getStatus($status->status) . "] \033[0m\n";
                 } else {
-                    echo str_pad($worker->user, 14),
-                    str_pad($worker->name, 14),
-                    str_pad(self::$workerRestartCount[$worker->name], 14),
-                    str_pad('unknow', 14),
-                    str_pad('unknow', 14),
-                    str_pad('unknow', 14),
-                    str_pad('unknow', 9),
-                    " \033[32;40m [OK] \033[0m\n";
+                    $content .= str_pad($pid, 7);
+                    $content .= str_pad($worker->name, 14);
+                    $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
+                    $content .= str_pad('unknow', 10);
+                    $content .= str_pad('unknow', 21);
+                    $content .= str_pad('unknow', 9);
+                    $content .= "\033[32;40m [OK] \033[0m\n";
                 }
             } else {
-                echo str_pad($worker->user, 14),
-                str_pad($worker->name, 14),
-                str_pad(self::$workerRestartCount[$worker->name], 14),
-                str_pad('unknow', 14),
-                str_pad('unknow', 14),
-                str_pad('unknow', 14),
-                str_pad('unknow', 9),
-                " \033[32;40m [OK] \033[0m\n";
+                $content .= str_pad($pid, 7);
+                $content .= str_pad($worker->name, 14);
+                $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
+                $content .= str_pad('unknow', 10);
+                $content .= str_pad('unknow', 21);
+                $content .= str_pad('unknow', 9);
+                $content .= "\033[32;40m [unknow] \033[0m\n";
             }
         }
-        echo "----------------------------------------------------------------\n";
+        $content .= "------------------------------------------------------------------------------------\n";
+        echo $content;
         if (self::$daemonize) {
             global $argv;
             $start_file = $argv[0];
@@ -284,6 +305,7 @@ class WorkerProcessContainer
         } else {
             echo "Press Ctrl-C to quit. Start success.\n";
         }
+        return $content;
     }
 
     protected static function resetStd()
@@ -306,23 +328,24 @@ class WorkerProcessContainer
 
     protected static function monitorWorkers()
     {
-        declare (ticks = 1) {
-            while (($pid = pcntl_waitpid(-1, $status, WNOHANG)) != -1) {
-                if ($pid > 0) {
-                    $status = pcntl_wtermsig($status);
-                    if (array_key_exists($pid, self::$workers)) {
-                        $worker = self::$workers[$pid];
-                        $restartCount = self::$workerRestartCount[$worker->name];
-                        if ($restartCount < $worker->restartLimit) {
-                            self::forkOneWorker(self::$workers[$pid]);
-                            self::$workerRestartCount[self::$workers[$pid]->name]++;
-                            self::log("LOG_RESTART_COUNT:" . self::$workerRestartCount[self::$workers[$pid]->name]);
-                        }
+        while (($pid = pcntl_waitpid(-1, $status, WNOHANG)) != -1) {
+            pcntl_signal_dispatch();
+            if ($pid > 0) {
+                $status = pcntl_wtermsig($status);
+                if (array_key_exists($pid, self::$workers)) {
+                    $worker = self::$workers[$pid];
+                    $restartCount = self::$workerRestartCount[$worker->name];
+                    if ($restartCount < $worker->restartLimit) {
+                        self::forkOneWorker(self::$workers[$pid]);
+                        self::$workerRestartCount[self::$workers[$pid]->name]++;
+                        self::log(self::$workers[$pid]->name . "_LOG_RESTART_COUNT:" . self::$workerRestartCount[self::$workers[$pid]->name]);
+                        unset(self::$workers[$pid]);
                     }
                 }
-                sleep(1);
-                continue;
             }
+            pcntl_signal_dispatch();
+            sleep(1);
+            continue;
         }
 
         self::stopAll();
@@ -354,6 +377,7 @@ class WorkerProcessContainer
                 posix_kill($pid, SIGKILL);
             }
         }
+        self::log("Stopped.");
         exit(250);
     }
 
@@ -365,9 +389,7 @@ class WorkerProcessContainer
             }
         }
 
-        $status = array(
-            'worker_restart_count' => self::$workerRestartCount
-        );
-        file_put_contents(self::$statusFile, serialize($status));
+        $content = self::displayUI();
+        file_put_contents(self::$statusFile, $content);
     }
 }

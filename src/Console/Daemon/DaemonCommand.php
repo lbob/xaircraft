@@ -36,17 +36,13 @@ class DaemonCommand extends Command
 
         $daemon = DaemonFactory::create($_SERVER['argc'], $_SERVER['argv']);
 
-        try {
-            /**
-             * @var $daemon Daemon
-             */
-            if (isset($daemon)) {
-                $daemon->start();
-                sleep(1);
-                Console::line("Daemon [" . $daemon->getPID() . "] started.");
-            }
-        } catch (\Exception $ex) {
-            throw new DaemonException($daemon->getName(), $ex->getMessage(), $ex);
+        /**
+         * @var $daemon Daemon
+         */
+        if (isset($daemon)) {
+            $daemon->start();
+            sleep(1);
+            //Console::line("Daemon [" . $daemon->getName() . "] started.");
         }
     }
 }

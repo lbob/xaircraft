@@ -64,19 +64,15 @@ class ConsoleLoader extends AppModule
     {
         $command = Command::make($_SERVER['argc'], $_SERVER['argv']);
 
-        try {
-            /**
-             * @var $command Command
-             */
-            if (isset($command)) {
-                Console::line("Start:");
-                Console::line("----------------------------------------");
-                $command->handle();
-                Console::line("----------------------------------------");
-                Console::line("End.");
-            }
-        } catch (\Exception $ex) {
-            throw new ConsoleException($ex->getMessage(), $ex);
+        /**
+         * @var $command Command
+         */
+        if (isset($command)) {
+            //Console::line("Start:");
+            //Console::line("----------------------------------------");
+            $command->handle();
+            //Console::line("----------------------------------------");
+            //Console::line("End.");
         }
     }
 

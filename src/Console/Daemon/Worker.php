@@ -74,14 +74,34 @@ abstract class Worker
         $this->init();
     }
 
+    public static function getStatus($status)
+    {
+        switch ($status) {
+            case self::STATUS_STARTING:
+                return 'STARTING';
+            case self::STATUS_RUNNING:
+                return 'RUNNING';
+            case self::STATUS_SHUTDOWN:
+                return 'SHUTDOWN';
+            case self::STATUS_RELOADING:
+                return 'RELOADING';
+            default:
+                return 'UNKNOW';
+        }
+    }
+
     public function run()
     {
         $this->status = self::STATUS_STARTING;
+        $this->pid = posix_getpid();
+
+        $this->log("Starting...");
 
         $this->installSignal();
         $this->registerTick();
 
         declare (ticks = 2) {
+            $this->status = self::STATUS_RUNNING;
             $this->onWorkerProcess();
         }
 
@@ -153,6 +173,7 @@ abstract class Worker
 
     public function signalHandler($signal)
     {
+        $this->log("SIGNAL = " . $signal);
         switch ($signal) {
             case SIGINT:
             case SIGTERM:
@@ -176,29 +197,36 @@ abstract class Worker
         $status->shutdown_process_count = count($this->shutdownChildrenPids);
         $status->start_at = $this->startAt;
 
-        @file_put_contents($this->statusFile, serialize($status));
+        $this->log($this->statusFile);
+        $this->log(json_encode($status));
+
+        @file_put_contents($this->statusFile, json_encode($status));
     }
 
-    protected function registerTick()
+    public function registerTick()
     {
         register_tick_function(function () {
+            $this->log('ticks');
             pcntl_signal_dispatch();
         });
     }
 
     protected function monitorChildrenProcess()
     {
+        pcntl_signal_dispatch();
         while ($pid = pcntl_waitpid(-1, $status, WNOHANG) != -1) {
+            pcntl_signal_dispatch();
             if ($pid > 0) {
                 $this->shutdownChildrenPids[] = array(
                     "status" => self::STATUS_SHUTDOWN,
-                    "start_at" => $this->children[$pid]['start_at'],
+                    "start_at" => isset($this->children[$pid]) ? $this->children[$pid]['start_at'] : 0,
                     "shutdown_at" => time()
                 );
                 if (isset($this->children[$pid])) {
                     unset($this->children[$pid]);
                 }
             }
+            pcntl_signal_dispatch();
             sleep(1);
             continue;
         }
@@ -232,18 +260,16 @@ abstract class Worker
     {
         $errors = error_get_last();
 
-        if ($this->status !== self::STATUS_SHUTDOWN) {
+        if ($errors && ($errors['type'] === E_ERROR ||
+                $errors['type'] === E_PARSE ||
+                $errors['type'] === E_CORE_ERROR ||
+                $errors['type'] === E_COMPILE_ERROR ||
+                $errors['type'] === E_RECOVERABLE_ERROR)
+        ) {
             $error_msg = "WORKER EXIT UNEXPECTED ";
-            if ($errors && ($errors['type'] === E_ERROR ||
-                    $errors['type'] === E_PARSE ||
-                    $errors['type'] === E_CORE_ERROR ||
-                    $errors['type'] === E_COMPILE_ERROR ||
-                    $errors['type'] === E_RECOVERABLE_ERROR)
-            ) {
-                $error_msg .= self::getErrorType($errors['type']) . " {$errors['message']} in {$errors['file']} on line {$errors['line']}";
+            $error_msg .= Worker::getErrorType($errors['type']) . " {$errors['message']} in {$errors['file']} on line {$errors['line']}";
 
-                $this->log($error_msg);
-            }
+            $this->log($error_msg);
         }
     }
 
