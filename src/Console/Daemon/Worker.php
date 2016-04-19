@@ -192,6 +192,7 @@ abstract class Worker
     {
         $status = new WorkerStatus();
         $status->pid = $this->pid;
+        $status->name = $this->name;
         $status->status = $this->status;
         $status->process_count = count($this->children);
         $status->shutdown_process_count = count($this->shutdownChildrenPids);

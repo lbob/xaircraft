@@ -36,6 +36,8 @@ class WorkerProcessContainer
 
     public static $stdoutFile = '/dev/null';
 
+    public static $workerInfoFile;
+
     public static $name = '';
 
     protected static $workers = array();
@@ -57,7 +59,7 @@ class WorkerProcessContainer
         self::init();
         self::daemonize();
         self::saveMasterPid();
-        //self::setProcessTitle("Xaircraft: worker process container start_class = " . get_called_class());
+        self::setProcessTitle("Xaircraft: worker process container start_class = " . get_called_class());
         self::installSignal();
         self::registerTicks();
         self::initWorkers($workers);
@@ -85,6 +87,15 @@ class WorkerProcessContainer
         return $path;
     }
 
+    public static function getWorkerInfoPath($name)
+    {
+        $path = App::path('cache') .
+            '/daemon/' .
+            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/workers.dat';
+
+        return $path;
+    }
+
     protected static function init()
     {
         self::$callClass = "container_" . get_called_class();
@@ -95,6 +106,7 @@ class WorkerProcessContainer
         self::$logFile = self::$baseFolder . "/log/" . date("Y-m-d") . ".log";
         self::$statusFile = self::$baseFolder . "/status.dat";
         self::$pidFile = self::$baseFolder . "/pid.dat";
+        self::$workerInfoFile = self::$baseFolder . "/workers.dat";
 
         Directory::makeDir(self::$baseFolder);
         Directory::makeDir(self::$baseFolder . "/log/");
@@ -102,6 +114,8 @@ class WorkerProcessContainer
         chmod(self::$logFile, 0622);
         touch(self::$statusFile);
         chmod(self::$statusFile, 0622);
+        touch(self::$workerInfoFile);
+        chmod(self::$workerInfoFile, 0622);
     }
 
     protected static function daemonize()
@@ -274,7 +288,7 @@ class WorkerProcessContainer
                     $content .= str_pad($worker->name, 14);
                     $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
                     $content .= str_pad($status->shutdown_process_count, 10);
-                    $content .= str_pad(date('Y-d-m H:i:s', $status->start_at), 21);
+                    $content .= str_pad(date('Y-m-d H:i:s', $status->start_at), 21);
                     $content .= str_pad($status->process_count, 9);
                     $content .= "\033[32;40m [" . Worker::getStatus($status->status) . "] \033[0m\n";
                 } else {
@@ -391,5 +405,22 @@ class WorkerProcessContainer
 
         $content = self::displayUI();
         file_put_contents(self::$statusFile, $content);
+
+        $statuses = array();
+        if (!empty(self::$workers)) {
+            /** @var Worker $worker */
+            foreach (self::$workers as $pid => $worker) {
+                $path = $worker->statusFile;
+                if (file_exists($path)) {
+                    $content = file_get_contents($path);
+                    /** @var WorkerStatus $status */
+                    $status = Json::toObject($content, WorkerStatus::class);
+                    if (isset($status)) {
+                        $statuses[] = $status;
+                    }
+                }
+            }
+        }
+        file_put_contents(self::$workerInfoFile, json_encode($statuses, true));
     }
 }

@@ -11,6 +11,8 @@ namespace Xaircraft\Console\Daemon;
 
 class WorkerStatus
 {
+    public $name;
+
     public $pid;
 
     public $process_count;
