@@ -13,6 +13,7 @@ use Xaircraft\App;
 use Xaircraft\Core\IO\Directory;
 use Xaircraft\Core\Strings;
 use Xaircraft\Exception\ExceptionHelper;
+use Xaircraft\Extensions\Log\Log;
 
 abstract class Worker
 {
@@ -52,6 +53,8 @@ abstract class Worker
 
     protected $args;
 
+    protected $watchWorkerName = '';
+
     public abstract function onWorkerProcess();
 
     public abstract function getWorkerName();
@@ -61,14 +64,12 @@ abstract class Worker
     public function __construct(array $args)
     {
         $this->name = $this->getWorkerName();
+        Log::debug('Worker::__construct', $this->name);
         $this->restartLimit = $this->getWorkerRestartLimit();
 
         ExceptionHelper::ThrowIfSpaceOrEmpty($this->name, "Name of worker can't be null.");
 
-        $this->baseFolder = App::path('cache') .
-                '/daemon/' .
-                Strings::camelToSnake(str_replace('\\', '_', get_called_class())
-            );
+        $this->baseFolder = App::path('cache') . '/daemon/workers/' . $this->name;
         $this->args = $args;
 
         $this->init();
@@ -97,6 +98,8 @@ abstract class Worker
 
         $this->log("Starting...");
 
+        WorkerProcessContainer::setProcessTitle("Xaircraft: worker process start_class = " . $this->name);
+
         $this->installSignal();
         $this->registerTick();
 
@@ -119,6 +122,7 @@ abstract class Worker
 
         if ($pid === 0) {
             $this->log("child process starting...");
+            WorkerProcessContainer::setProcessTitle("Xaircraft: worker child process start_class = " . $this->name);
 
             $this->reinstallSignal();
             register_shutdown_function(array($this, "checkErrors"));
@@ -136,6 +140,8 @@ abstract class Worker
                 "start_at" => time(),
                 "shutdown_at" => 0
             );
+
+            return $pid;
         }
     }
 
@@ -146,6 +152,7 @@ abstract class Worker
 
         $this->logFile = $this->baseFolder . "/log/" . date("Y-m-d") . ".log";
         $this->statusFile = $this->baseFolder . "/status.dat";
+        Log::debug('Worker::init', $this->statusFile);
 
         Directory::makeDir($this->baseFolder);
         Directory::makeDir($this->baseFolder . "/log/");

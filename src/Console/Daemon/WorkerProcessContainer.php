@@ -15,6 +15,7 @@ use Xaircraft\Core\IO\File;
 use Xaircraft\Core\Json;
 use Xaircraft\Core\Strings;
 use Xaircraft\Exception\IOException;
+use Xaircraft\Extensions\Log\Log;
 
 class WorkerProcessContainer
 {
@@ -59,7 +60,7 @@ class WorkerProcessContainer
         self::init();
         self::daemonize();
         self::saveMasterPid();
-        self::setProcessTitle("Xaircraft: worker process container start_class = " . get_called_class());
+        self::setProcessTitle("Xaircraft: worker process container start_class = " . $name);
         self::installSignal();
         self::registerTicks();
         self::initWorkers($workers);
@@ -71,27 +72,21 @@ class WorkerProcessContainer
 
     public static function getPidFile($name)
     {
-        $path = App::path('cache') .
-            '/daemon/' .
-            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/pid.dat';
+        $path = App::path('cache') . '/daemon/worker_container/' . $name . '/pid.dat';
 
         return $path;
     }
 
     public static function getStatusFile($name)
     {
-        $path = App::path('cache') .
-            '/daemon/' .
-            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/status.dat';
+        $path = App::path('cache') . '/daemon/worker_container/' . $name . '/status.dat';
 
         return $path;
     }
 
     public static function getWorkerInfoPath($name)
     {
-        $path = App::path('cache') .
-            '/daemon/' .
-            Strings::camelToSnake(str_replace('\\', '_', "container_" . get_called_class())) . '/' . $name . '/workers.dat';
+        $path = App::path('cache') . '/daemon/worker_container/' . $name . '/workers.dat';
 
         return $path;
     }
@@ -99,9 +94,7 @@ class WorkerProcessContainer
     protected static function init()
     {
         self::$callClass = "container_" . get_called_class();
-        self::$baseFolder = App::path('cache') .
-            '/daemon/' .
-            Strings::camelToSnake(str_replace('\\', '_', self::$callClass)) . '/' . self::$name;
+        self::$baseFolder = App::path('cache') . '/daemon/worker_container/' . self::$name;
         self::$startAt = time();
         self::$logFile = self::$baseFolder . "/log/" . date("Y-m-d") . ".log";
         self::$statusFile = self::$baseFolder . "/status.dat";
@@ -151,7 +144,7 @@ class WorkerProcessContainer
         self::log('Master PID:' . self::$pid);
     }
 
-    protected static function setProcessTitle($title)
+    public static function setProcessTitle($title)
     {
         if (function_exists('cli_set_process_title')) {
             @cli_set_process_title($title);
@@ -272,14 +265,19 @@ class WorkerProcessContainer
 
         /** @var Worker $worker */
         foreach (self::$workers as $pid => $worker) {
+            Log::debug('WorkerProcessContainer_displayUI.', $worker->name);
             if (!posix_kill($pid, SIGUSR1)) {
                 self::log("kill -SIGUSR1 $pid fail.");
+                Log::debug('WorkerProcessContainer: ' . $worker->name, "kill -SIGUSR1 $pid fail.");
             } else {
                 self::log("kill -SIGUSR1 $pid success.");
+                Log::debug('WorkerProcessContainer: ' . $worker->name, "kill -SIGUSR1 $pid success.");
             }
             sleep(3);
 
             $statusContent = file_get_contents($worker->statusFile);
+            Log::debug('WorkerProcessContainer::statusContent', $statusContent);
+            Log::debug('WorkerProcessContainer::statusFile:' . $worker->name, $worker->statusFile);
             if (isset($statusContent)) {
                 /** @var WorkerStatus $status */
                 $status = Json::toObject($statusContent, WorkerStatus::class);

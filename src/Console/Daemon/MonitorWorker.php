@@ -11,20 +11,20 @@ namespace Xaircraft\Console\Daemon;
 
 use Xaircraft\Core\Json;
 use Xaircraft\Exception\ExceptionHelper;
+use Xaircraft\Extensions\Log\Log;
 
 class MonitorWorker extends Worker
 {
     protected $port;
-    protected $watchWorkerName;
 
     public function __construct($watchWorkerName, array $args, $port)
     {
+        $this->watchWorkerName = $watchWorkerName;
         parent::__construct($args);
 
         ExceptionHelper::ThrowIfNotTrue($port >= 0 && $port < 65535, '端口号错误');
 
         $this->port = $port;
-        $this->watchWorkerName = $watchWorkerName;
     }
 
     public function onWorkerProcess()
@@ -56,6 +56,7 @@ class MonitorWorker extends Worker
                             $this->log("SIGUSR1 to WorkerProcessContainer success.");
                             sleep(3);
                             $path = WorkerProcessContainer::getWorkerInfoPath($this->watchWorkerName);
+                            Log::debug('MonitorWorker::onWorkerProcess:', $path);
                             if (file_exists($path)) {
                                 $content = file_get_contents($path);
                                 if (!empty($content)) {
@@ -88,7 +89,7 @@ class MonitorWorker extends Worker
 
     public function getWorkerName()
     {
-        return "monitor";
+        return "monitor_" . $this->watchWorkerName;
     }
 
     public function getWorkerRestartLimit()

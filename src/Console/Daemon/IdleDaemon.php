@@ -27,6 +27,18 @@ class IdleDaemon extends Daemon
                 $this->log("TEST" . time());
                 sleep(10);
             });
+            $this->fork(function () {
+                $this->log("TEST" . time());
+                sleep(10);
+            });
+            $this->fork(function () {
+                $this->log("TEST" . time());
+                sleep(10);
+            });
+            $this->fork(function () {
+                $this->log("TEST" . time());
+                sleep(10);
+            });
             sleep(10);
         }
     }
