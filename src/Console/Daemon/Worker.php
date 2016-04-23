@@ -214,7 +214,6 @@ abstract class Worker
     public function registerTick()
     {
         register_tick_function(function () {
-            $this->log('ticks');
             pcntl_signal_dispatch();
         });
     }

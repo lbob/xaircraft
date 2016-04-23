@@ -257,7 +257,7 @@ class WorkerProcessContainer
         $content .= 'XAIRCRAFT DAEMON version:' . self::VERSION . "            PHP version:" . PHP_VERSION . "\n";
         $content .= "------------------------------\033[47;30m WORKERS \033[0m---------------------------------------------\n";
         $content .= "\033[47;30mpid\033[0m" . str_pad('', 7 - strlen('pid'));
-        $content .= "\033[47;30mworker\033[0m" . str_pad('', 14 - strlen('worker'));
+        $content .= "\033[47;30mworker\033[0m" . str_pad('', 20 - strlen('worker'));
         $content .= "\033[47;30mrestart\033[0m" . str_pad('', 9 - strlen('restart'));
         $content .= "\033[47;30mshutdown\033[0m" . str_pad('', 10 - strlen('shutdown'));
         $content .= "\033[47;30mstart_at\033[0m" . str_pad('', 21 - strlen('start_at'));
@@ -283,7 +283,7 @@ class WorkerProcessContainer
                 $status = Json::toObject($statusContent, WorkerStatus::class);
                 if ($status) {
                     $content .= str_pad($pid, 7);
-                    $content .= str_pad($worker->name, 14);
+                    $content .= str_pad($worker->name, 20);
                     $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
                     $content .= str_pad($status->shutdown_process_count, 10);
                     $content .= str_pad(date('Y-m-d H:i:s', $status->start_at), 21);
@@ -291,7 +291,7 @@ class WorkerProcessContainer
                     $content .= "\033[32;40m [" . Worker::getStatus($status->status) . "] \033[0m\n";
                 } else {
                     $content .= str_pad($pid, 7);
-                    $content .= str_pad($worker->name, 14);
+                    $content .= str_pad($worker->name, 20);
                     $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
                     $content .= str_pad('unknow', 10);
                     $content .= str_pad('unknow', 21);
@@ -300,7 +300,7 @@ class WorkerProcessContainer
                 }
             } else {
                 $content .= str_pad($pid, 7);
-                $content .= str_pad($worker->name, 14);
+                $content .= str_pad($worker->name, 20);
                 $content .= str_pad(self::$workerRestartCount[$worker->name], 9);
                 $content .= str_pad('unknow', 10);
                 $content .= str_pad('unknow', 21);
