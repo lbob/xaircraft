@@ -379,10 +379,12 @@ class Router
             //构造匹配
             $expression = '';
             foreach ($this->routeResult->params as $key => $value) {
-                $expression = $expression . '[' . $key . '=' . $value . ']';
+                if (is_string($value)) {
+                    $expression = $expression . '[' . $key . '=' . $value . ']';
+                }
             }
             /**
-             * @var $filterBinder \Xaircraft\FilterBinder
+             * @var $filterBinder FilterBinder
              */
             foreach ($this->filterBinders as $filterBinder) {
                 //优先匹配
