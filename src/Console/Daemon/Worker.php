@@ -233,9 +233,11 @@ abstract class Worker
                     unset($this->children[$pid]);
                 }
             }
+            if ($pid == 0 || $pid == 1) {
+                break;
+            }
             pcntl_signal_dispatch();
             sleep(1);
-            continue;
         }
     }
 

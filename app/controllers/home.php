@@ -33,6 +33,21 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
+    public function test_update_field()
+    {
+        
+    }
+
+    public function test_field()
+    {
+        $result = DB::table('user')->select('create_at', 'create_by')->format(array(
+            'create_at' => FieldFormatter::create(FieldType::DATE, "Y/m/d H:i"),
+            'create_by' => FieldFormatter::create(FieldType::DATE, "Y/m/d H:i")
+        ))->execute();
+
+        var_dump($result);
+    }
+
     /**
      * @param array $a
      */
