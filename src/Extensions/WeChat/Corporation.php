@@ -90,12 +90,13 @@ abstract class Corporation
         if ($this->cacheDriver->has($this->ticketKey . $this->getCorpName())) {
             $this->ticketInfo = unserialize($this->cacheDriver->get($this->ticketKey . $this->getCorpName()));
         }
+        $signature = $this->getWeChatSignature($url);
 
         return array(
             'appId' => $this->option('corpid'),
             'timestamp' => $this->ticketInfo->timestamp,
             'nonceStr' => $this->ticketInfo->noncestr,
-            'signature' => $this->getWeChatSignature($url)
+            'signature' => $signature
         );
     }
 
