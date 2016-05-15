@@ -9,6 +9,7 @@
 namespace Xaircraft\Database;
 
 
+use Xaircraft\Database\Condition\ConditionBuilder;
 use Xaircraft\Database\Condition\WhereBetweenConditionBuilder;
 use Xaircraft\Database\Condition\WhereConditionBuilder;
 use Xaircraft\Database\Condition\WhereExistsConditionBuilder;
@@ -388,6 +389,11 @@ class TableQuery implements QueryStringBuilder
             if (is_callable($handler)) {
                 $this->addCondition(ConditionInfo::make(
                     $orAnd, WhereConditionBuilder::makeClause($handler)));
+            }
+            if ($handler instanceof FieldFunction) {
+                $this->addCondition(ConditionInfo::make(
+                    $orAnd, WhereConditionBuilder::makeNormal($handler, null, null)
+                ));
             }
         } else {
             $field = $args[0];
