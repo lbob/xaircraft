@@ -10,6 +10,7 @@ namespace Xaircraft\Database\Condition;
 
 
 use Xaircraft\Database\FieldInfo;
+use Xaircraft\Database\Func\FieldFunction;
 use Xaircraft\Database\QueryContext;
 use Xaircraft\Database\Raw;
 use Xaircraft\Database\WhereQuery;
@@ -28,6 +29,8 @@ class WhereConditionBuilder extends ConditionBuilder
 
     public $clause;
 
+    public $is_fieldFunction = false;
+
     public function getQueryString(QueryContext $context)
     {
         $statements = array();
@@ -35,6 +38,8 @@ class WhereConditionBuilder extends ConditionBuilder
             $field = $this->field->getName($context);
             if ($this->value instanceof Raw) {
                 $statements[] = "$field $this->operator " . $this->value->getValue();
+            } else if ($this->is_fieldFunction) {
+                $statements[] = "$field";
             } else {
                 $statements[] = "$field $this->operator ?";
                 $context->param($this->value);
@@ -54,6 +59,10 @@ class WhereConditionBuilder extends ConditionBuilder
         $builder->field = FieldInfo::make($field, null, null, $isSubQuery);
         $builder->operator = $operator;
         $builder->value = $value;
+
+        if ($field instanceof FieldFunction) {
+            $builder->is_fieldFunction = true;
+        }
 
         return $builder;
     }
