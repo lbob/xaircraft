@@ -13,6 +13,7 @@ use Xaircraft\Core\Attribute\Attribute;
 use Xaircraft\Core\Attribute\AttributeCollection;
 use Xaircraft\Core\Attribute\VariableAttribute;
 use Xaircraft\DI;
+use Xaircraft\Extensions\Log\Log;
 use Xaircraft\Nebula\Model;
 
 class Json
@@ -28,6 +29,7 @@ class Json
             try {
                 $params = self::toArray($arg);
             } catch (\Exception $ex) {
+                Log::info('Json_toObject', "转换类[$class]失败，内容：$params");
                 return $params;
             }
         }
