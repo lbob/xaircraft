@@ -8,13 +8,11 @@
 
 namespace Xaircraft\Database\Condition;
 
-
 use Xaircraft\Database\FieldInfo;
 use Xaircraft\Database\Func\FieldFunction;
 use Xaircraft\Database\QueryContext;
 use Xaircraft\Database\Raw;
 use Xaircraft\Database\WhereQuery;
-use Xaircraft\DI;
 
 class WhereConditionBuilder extends ConditionBuilder
 {
@@ -39,7 +37,12 @@ class WhereConditionBuilder extends ConditionBuilder
             if ($this->value instanceof Raw) {
                 $statements[] = "$field $this->operator " . $this->value->getValue();
             } else if ($this->is_fieldFunction) {
-                $statements[] = "$field";
+                if (isset($this->operator) && isset($this->value)) {
+                    $statements[] = "$field $this->operator ?";
+                    $context->param($this->value);
+                } else {
+                    $statements[] = "$field";
+                }
             } else {
                 $statements[] = "$field $this->operator ?";
                 $context->param($this->value);
