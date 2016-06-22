@@ -82,7 +82,11 @@ class Net {
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
             }
             if($header){
-                curl_setopt($ch, CURLOPT_HEADER, 1);
+                if(is_array($header)){
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                }else{
+                    curl_setopt($ch, CURLOPT_HEADER, 1);
+                }
             }
             $res = curl_exec($ch);
             curl_close($ch);
