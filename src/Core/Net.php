@@ -78,14 +78,20 @@ class Net {
             curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             if (!empty($headers)) {
-                curl_setopt ($ch, CURLOPT_HTTPHEADER , $headers);
+                foreach ($headers as $key => $value) {
+                    curl_setopt($ch, $key, $value);
+                }
             }
             if(!empty($postBody)){
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
             }
             if($header){
-                curl_setopt($ch, CURLOPT_HEADER, 1);
+                if(is_array($header)){
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                }else{
+                    curl_setopt($ch, CURLOPT_HEADER, 1);
+                }
             }
             $res = curl_exec($ch);
             curl_close($ch);
