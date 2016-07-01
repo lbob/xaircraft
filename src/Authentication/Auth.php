@@ -9,16 +9,16 @@
 namespace Xaircraft\Authentication;
 
 
-use Xaircraft\Authentication\Contract\CurrentUser;
+use Xaircraft\Authentication\Contract\BaseCurrentUser;
 use Xaircraft\DI;
 
 class Auth
 {
     public static function check()
     {
-        /** @var CurrentUser $user */
+        /** @var BaseCurrentUser $user */
         $user = self::getAuthStorage()->get();
-        if (!isset($user) || 0 === $user->getID()) {
+        if (!isset($user) || $user->isExist()) {
             return false;
         }
         return true;
@@ -31,7 +31,6 @@ class Auth
 
     public static function user()
     {
-        /** @var CurrentUser $user */
         $user = self::getAuthStorage()->get();
         return $user;
     }

@@ -9,15 +9,15 @@
 namespace Xaircraft\Authentication;
 
 
-use Xaircraft\Authentication\Contract\CurrentUser;
+use Xaircraft\Authentication\Contract\BaseCurrentUser;
 use Xaircraft\Web\Session;
 
 interface AuthStorage
 {
-    public function set(CurrentUser $user);
+    public function set(BaseCurrentUser $user);
 
     /**
-     * @return CurrentUser
+     * @return BaseCurrentUser
      */
     public function get();
 

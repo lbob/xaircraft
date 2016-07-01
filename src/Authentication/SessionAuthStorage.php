@@ -9,14 +9,14 @@
 namespace Xaircraft\Authentication;
 
 
-use Xaircraft\Authentication\Contract\CurrentUser;
+use Xaircraft\Authentication\Contract\BaseCurrentUser;
 use Xaircraft\Web\Session;
 
 class SessionAuthStorage implements AuthStorage
 {
     private $currentUserSessionID = '__current_user__';
 
-    public function set(CurrentUser $user)
+    public function set(BaseCurrentUser $user)
     {
         Session::put($this->currentUserSessionID, $user);
     }
