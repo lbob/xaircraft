@@ -20,6 +20,14 @@ class DateFieldType extends FieldType
         if (!isset($args)) {
             $args = "Y-m-d H:i:s";
         }
-        return date($args, $value);
+
+        if (is_numeric($value)) {
+            return date($args, $value);
+        }
+        if (is_string($value)) {
+            $timestamp = strtotime($value);
+            return date($args, $timestamp);
+        }
+        return 0;
     }
 }
