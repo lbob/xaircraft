@@ -18,7 +18,7 @@ class Auth
     {
         /** @var BaseCurrentUser $user */
         $user = self::getAuthStorage()->get();
-        if (!isset($user) || $user->isExist()) {
+        if (!isset($user) || !$user->isExist()) {
             return false;
         }
         return true;
