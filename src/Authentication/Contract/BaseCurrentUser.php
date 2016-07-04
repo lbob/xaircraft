@@ -25,7 +25,7 @@ class BaseCurrentUser extends Container
         }
     }
 
-    public static function create(array $user)
+    public static function load(array $user)
     {
         return new BaseCurrentUser($user);
     }
