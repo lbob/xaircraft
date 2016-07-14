@@ -12,6 +12,7 @@ namespace Xaircraft\Web;
 use Xaircraft\App;
 use Xaircraft\Authentication\AuthStorage;
 use Xaircraft\Authentication\SessionAuthStorage;
+use Xaircraft\Core\IO\File;
 use Xaircraft\DI;
 use Xaircraft\Exception\URLRouterException;
 use Xaircraft\Globals;
@@ -63,7 +64,7 @@ class WebAppModule extends AppModule
 
             $namespace = null;
             if (array_key_exists('namespace', $params)) {
-                $namespace = $params['namespace'];
+                $namespace = $params['namespace'] !== '' ? $params['namespace'] : null;
             }
             if (array_key_exists('controller', $params)) {
                 $controller = $params['controller'];
@@ -78,7 +79,7 @@ class WebAppModule extends AppModule
                 $action = $defaultRouterToken['action'];
             }
             Controller::invoke($controller, $action, $namespace);
-            
+
             $this->httpModuleCollection->fireEnd();
         });
 
@@ -102,8 +103,11 @@ class WebAppModule extends AppModule
     private function initHttpModules()
     {
         $modules = new HttpModuleCollection();
+        $path = App::path('http_module');
 
-        require_once App::path('http_module');
+        if (file_exists($path)) {
+            require_once App::path('http_module');
+        }
 
         $this->httpModuleCollection = $modules;
     }
