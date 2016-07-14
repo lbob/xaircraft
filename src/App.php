@@ -181,9 +181,9 @@ class App extends Container
     {
         self::module(AutoLoader::class);
         self::module(InjectModule::class);
-        self::module(AppModuleLoader::class);
         self::module(EnvironmentPathModule::class);
         self::module(LogAppModule::class);
+        self::module(AppModuleLoader::class);
         self::module(WebAppModule::class);
         self::module(ConsoleLoader::class);
     }

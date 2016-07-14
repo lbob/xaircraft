@@ -23,6 +23,11 @@ use Xaircraft\Web\Mvc\Controller;
 
 class WebAppModule extends AppModule
 {
+    /**
+     * @var HttpModuleCollection
+     */
+    private $httpModuleCollection;
+
     public function enable()
     {
         if (Globals::RUNTIME_MODE_APACHE2HANDLER !== App::environment(Globals::ENV_RUNTIME_MODE)) {
@@ -53,6 +58,9 @@ class WebAppModule extends AppModule
         });
 
         $this->router->registerDefaultMatchedHandler(function ($params) use ($defaultRouterToken) {
+            $this->initHttpModules();
+            $this->httpModuleCollection->fireStart();
+
             $namespace = null;
             if (array_key_exists('namespace', $params)) {
                 $namespace = $params['namespace'];
@@ -70,6 +78,8 @@ class WebAppModule extends AppModule
                 $action = $defaultRouterToken['action'];
             }
             Controller::invoke($controller, $action, $namespace);
+            
+            $this->httpModuleCollection->fireEnd();
         });
 
         $this->router->missing(function () {
@@ -87,5 +97,14 @@ class WebAppModule extends AppModule
     public function appEnd()
     {
         // TODO: Implement appEnd() method.
+    }
+
+    private function initHttpModules()
+    {
+        $modules = new HttpModuleCollection();
+
+        require_once App::path('http_module');
+
+        $this->httpModuleCollection = $modules;
     }
 }
