@@ -31,10 +31,11 @@ class WebAppModule extends AppModule
 
     public function enable()
     {
-        if (Globals::RUNTIME_MODE_APACHE2HANDLER !== App::environment(Globals::ENV_RUNTIME_MODE)) {
-            return false;
+        if (Globals::RUNTIME_MODE_APACHE2HANDLER === App::environment(Globals::ENV_RUNTIME_MODE) ||
+            Globals::RUNTIME_MODE_CGI_FCGI === App::environment(Globals::ENV_RUNTIME_MODE)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**

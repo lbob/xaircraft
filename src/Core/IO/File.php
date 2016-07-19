@@ -45,7 +45,6 @@ class File
     public static function readText($path)
     {
         if (isset($path) && file_exists($path) && is_readable($path)) {
-            Log::alert('FILE', $path);
             return file_get_contents($path);
         }
 
