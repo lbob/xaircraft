@@ -451,16 +451,16 @@ class TableQuery implements QueryStringBuilder
         return $this;
     }
 
-    private function parseWhereIn($field, $params, $notIn = false)
+    private function parseWhereIn($field, $params, $notIn = false, $orAnd = ConditionInfo::CONDITION_AND)
     {
         if (isset($params) && is_array($params)) {
             $this->addCondition(ConditionInfo::make(
-                ConditionInfo::CONDITION_AND,
+                $orAnd,
                 WhereInConditionBuilder::makeNormal($field, $params, $notIn)
             ));
         } else if (isset($params) && is_callable($params)) {
             $this->addCondition(ConditionInfo::make(
-                ConditionInfo::CONDITION_AND,
+                $orAnd,
                 WhereInConditionBuilder::makeClause($field, $params, $notIn)
             ));
         }
@@ -469,6 +469,13 @@ class TableQuery implements QueryStringBuilder
     public function whereIn($field, $params)
     {
         $this->parseWhereIn($field, $params);
+
+        return $this;
+    }
+
+    public function orWhereIn($field, $params)
+    {
+        $this->parseWhereIn($field, $params, false, ConditionInfo::CONDITION_OR);
 
         return $this;
     }
