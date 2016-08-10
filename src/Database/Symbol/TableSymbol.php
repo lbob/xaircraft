@@ -13,6 +13,7 @@ use Xaircraft\Exception\QueryException;
 
 class TableSymbol
 {
+    private $database;
     private $name;
     private $alias;
     private $sourceSymbol;
@@ -65,7 +66,8 @@ class TableSymbol
 
     private function parseSymbol()
     {
-        if (preg_match('#^(?<name>[a-zA-Z][a-zA-Z0-9\_\-]*)([ ]+[aA][sS][ ]+(?<alias>[a-zA-Z][a-zA-Z0-9\_\-]*))?$#i', $this->sourceSymbol, $match)) {
+        if (preg_match('#^((?<database>[a-zA-Z][a-zA-Z0-9\_\-]*)\.)?(?<name>[a-zA-Z][a-zA-Z0-9\_\-]*)([ ]+[aA][sS][ ]+(?<alias>[a-zA-Z][a-zA-Z0-9\_\-]*))?$#i', $this->sourceSymbol, $match)) {
+            $this->database = array_key_exists('database', $match) ? $match['database'] : null;
             $this->name = $match['name'];
             $this->alias = array_key_exists('alias', $match) ? $match['alias'] : null;
         } else {
