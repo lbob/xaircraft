@@ -22,6 +22,8 @@ class DB {
 
     private static $processMode = false;
 
+    private static $schemaMappings = array();
+
     /**
      * @var \Xaircraft\Database\Database
      */
@@ -383,12 +385,40 @@ class DB {
     }
 
     /**
-     * 获取数据库配置节点名称
+     * 获取数据库名称
      * @return string
      */
     public static function getDatabaseName()
     {
         return self::getInstance(self::$currentDatabase)->provider->getDatabaseName();
+    }
+
+    /**
+     * 获取当前数据库配置节点名称
+     * @return string
+     */
+    public static function currentDatabase()
+    {
+        return self::$currentDatabase;
+    }
+
+    /**
+     * 获取或设置 TableSchema 的数据库映射关系
+     * @param $schema
+     * @param null $database
+     * @return mixed|string
+     */
+    public static function schemaMappings($schema, $database = null)
+    {
+        if (isset($database)) {
+            self::$schemaMappings[$schema] = $database;
+        }
+
+        if (array_key_exists($schema, self::$schemaMappings) !== false) {
+            return self::$schemaMappings[$schema];
+        }
+
+        return self::getDatabaseName();
     }
 }
 
