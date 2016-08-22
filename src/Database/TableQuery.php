@@ -242,6 +242,7 @@ class TableQuery implements QueryStringBuilder
         $this->queryType = self::QUERY_SELECT;
 
         $this->selectQuerySettings['detail'] = true;
+        $this->take(1);
 
         return $this;
     }
