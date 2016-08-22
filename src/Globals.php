@@ -73,4 +73,5 @@ class Globals
 
     const RUNTIME_MODE_APACHE2HANDLER = 'apache2handler';
     const RUNTIME_MODE_CLI = 'cli';
+    const RUNTIME_MODE_CGI_FCGI = 'cgi-fcgi';
 }

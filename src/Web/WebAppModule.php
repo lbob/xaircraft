@@ -12,6 +12,7 @@ namespace Xaircraft\Web;
 use Xaircraft\App;
 use Xaircraft\Authentication\AuthStorage;
 use Xaircraft\Authentication\SessionAuthStorage;
+use Xaircraft\Core\IO\File;
 use Xaircraft\DI;
 use Xaircraft\Exception\URLRouterException;
 use Xaircraft\Globals;
@@ -23,12 +24,18 @@ use Xaircraft\Web\Mvc\Controller;
 
 class WebAppModule extends AppModule
 {
+    /**
+     * @var HttpModuleCollection
+     */
+    private $httpModuleCollection;
+
     public function enable()
     {
-        if (Globals::RUNTIME_MODE_APACHE2HANDLER !== App::environment(Globals::ENV_RUNTIME_MODE)) {
-            return false;
+        if (Globals::RUNTIME_MODE_APACHE2HANDLER === App::environment(Globals::ENV_RUNTIME_MODE) ||
+            Globals::RUNTIME_MODE_CGI_FCGI === App::environment(Globals::ENV_RUNTIME_MODE)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -53,9 +60,12 @@ class WebAppModule extends AppModule
         });
 
         $this->router->registerDefaultMatchedHandler(function ($params) use ($defaultRouterToken) {
+            $this->initHttpModules();
+            $this->httpModuleCollection->fireStart();
+
             $namespace = null;
             if (array_key_exists('namespace', $params)) {
-                $namespace = $params['namespace'];
+                $namespace = $params['namespace'] !== '' ? $params['namespace'] : null;
             }
             if (array_key_exists('controller', $params)) {
                 $controller = $params['controller'];
@@ -70,6 +80,8 @@ class WebAppModule extends AppModule
                 $action = $defaultRouterToken['action'];
             }
             Controller::invoke($controller, $action, $namespace);
+
+            $this->httpModuleCollection->fireEnd();
         });
 
         $this->router->missing(function () {
@@ -87,5 +99,17 @@ class WebAppModule extends AppModule
     public function appEnd()
     {
         // TODO: Implement appEnd() method.
+    }
+
+    private function initHttpModules()
+    {
+        $modules = new HttpModuleCollection();
+        $path = App::path('http_module');
+
+        if (file_exists($path)) {
+            require_once App::path('http_module');
+        }
+
+        $this->httpModuleCollection = $modules;
     }
 }

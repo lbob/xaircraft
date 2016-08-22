@@ -11,9 +11,9 @@ namespace Xaircraft\Authentication\Contract;
 
 use Xaircraft\Core\Container;
 
-class CurrentUser extends Container
+class CurrentUser extends BaseCurrentUser
 {
-    private function __construct($id, $username, $name, $level, $email, $extra)
+    public function __construct($id, $username, $name, $level, $email, $extra)
     {
         $this['id'] = $id;
         $this['username'] = $username;
@@ -21,6 +21,7 @@ class CurrentUser extends Container
         $this['level'] = $level;
         $this['email'] = $email;
         $this['extra'] = serialize($extra);
+        parent::__construct((array)$this);
     }
 
     public static function create($id, $username, $name, $level, $email, $extra)

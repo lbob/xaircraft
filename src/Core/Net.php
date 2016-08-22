@@ -39,16 +39,16 @@ class Net {
         return $server_ip;
     }
 
-    public static function get($url, array $params = null, $header = false)
+    public static function get($url, array $params = null, $header = false, array $headers = null)
     {
         $url = self::formatUrl($url, $params);
-        return self::getRequestResult($url, null, $header);
+        return self::getRequestResult($url, null, $header, $headers);
     }
 
-    public static function post($url, $body, array $params = null, $header = false)
+    public static function post($url, $body, array $params = null, $header = false, array $headers = null)
     {
         $url = self::formatUrl($url, $params);
-        return self::getRequestResult($url, $body, $header);
+        return self::getRequestResult($url, $body, $header, $headers);
     }
 
     private static function formatUrl($url, array $params = null)
@@ -62,7 +62,7 @@ class Net {
         return $url;
     }
 
-    private static function getRequestResult($url, $postBody = null, $header = false)
+    private static function getRequestResult($url, $postBody = null, $header = false, array $headers = null)
     {
         if (extension_loaded('curl')) {
             $ch = curl_init();
@@ -77,6 +77,9 @@ class Net {
             curl_setopt($ch, CURLOPT_TIMEOUT, '60');
             curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
             curl_setopt($ch, CURLOPT_HEADER, 0);
+            if (!empty($headers)) {
+                curl_setopt ($ch, CURLOPT_HTTPHEADER , $headers);
+            }
             if(!empty($postBody)){
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $postBody);
