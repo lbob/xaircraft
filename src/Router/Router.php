@@ -13,7 +13,8 @@ class Router
     const PATTERN_ID = '[\d]+';
     const PATTERN_NAME = '[a-z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*';
     const PATTERN_TAIL = '.+';
-    const PATTERN_NAMESPACE = '#^\/?([^\{\}]+[a-zA-Z0-9])#i';
+    //const PATTERN_NAMESPACE = '#^\/?([^\{\}]+[a-zA-Z0-9])#i';
+    const PATTERN_NAMESPACE = '#^\/?(.+)?\/\{controller\}#i';
 
     const PATTERN_TOKEN_LESS = '#\/(\{[^\{\}]+\}\?)#i';
     const PATTERN_TOKEN_NOT_LESS = '#\/(\{[^\{\}]+\})#i';
@@ -357,7 +358,10 @@ class Router
             //namespace
             $namespace = null;
             if (preg_match(self::PATTERN_NAMESPACE, $expression, $matches)) {
-                if (!empty($matches[1])) $namespace = $matches[1];
+                if (!empty($matches[1])) {
+                    $namespace = $matches[1];
+                    $namespace = preg_replace('#\{[^\}]+\}\/?#i', '', $namespace);
+                }
             }
 
             $result = array(

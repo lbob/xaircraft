@@ -63,7 +63,8 @@ class TableSchema extends Container
 
     public function getName()
     {
-        return $this->table;
+        $database = DB::schemaMappings($this->table);
+        return $database . "."  . $this->table;
     }
 
     public function getSymbol()

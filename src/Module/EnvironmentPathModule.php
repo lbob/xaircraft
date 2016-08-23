@@ -25,6 +25,7 @@ class EnvironmentPathModule extends AppModule
         App::path('command', App::path('config') . '/command.php');
         App::path('log', App::path('app') . '/log');
         App::path('async_job', App::path('cache') . '/async_job');
+        App::path('http_module', App::path('config') . '/http_module.php');
     }
 
     public function handle()
