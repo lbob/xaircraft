@@ -45,4 +45,14 @@ class Func
     {
         return new IsNotNullFieldFunction($field);
     }
+
+    public static function max($field)
+    {
+        return new MaxFieldFunction($field);
+    }
+
+    public static function min($field)
+    {
+        return new MinFieldFunction($field);
+    }
 }
