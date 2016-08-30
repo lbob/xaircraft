@@ -113,16 +113,21 @@ class SelectTableQueryExecutor extends TableQueryExecutor
                 /** @var FieldInfo $field */
                 $field = $this->selectFields[0];
                 $alias = $field->getAlias();
+                $value = null;
                 if (isset($alias)) {
-                    return $formatResult[0][$alias];
+                    $value = $formatResult[0][$alias];
+                } else if (false !== array_key_exists($field->getField(), $formatResult[0])) {
+                    $value = $formatResult[0][$field->getField()];
                 }
-                $row = $formatResult[0];
-                if (isset($row[$field->getField()])) {
-                    return $formatResult[0][$field->getField()];
+                if (!isset($value)) {
+                    if (!empty($formatResult[0])) {
+                        foreach ($formatResult[0] as $item) {
+                            $value = $item;
+                            break;
+                        }
+                    }
                 }
-                foreach ($row as $item) {
-                    return $item;
-                }
+                return $value;
             }
 
             if ($this->singleField) {
