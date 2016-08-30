@@ -98,10 +98,25 @@ class Request
         return $default;
     }
 
+    private function getAllHeaders()
+    {
+        if (!function_exists('getallheaders')) {
+            $headers = array();
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+            return $headers;
+        }
+
+        return getallheaders();
+    }
+
     public function header($key)
     {
         if (empty($this->headers)) {
-            foreach (getallheaders() as $item => $value) {
+            foreach ($this->getAllHeaders() as $item => $value) {
                 $this->headers[$item] = $value;
             }
         }
