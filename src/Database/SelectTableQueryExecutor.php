@@ -116,7 +116,13 @@ class SelectTableQueryExecutor extends TableQueryExecutor
                 if (isset($alias)) {
                     return $formatResult[0][$alias];
                 }
-                return $formatResult[0][$field->getField()];
+                $row = $formatResult[0];
+                if (isset($row[$field->getField()])) {
+                    return $formatResult[0][$field->getField()];
+                }
+                foreach ($row as $item) {
+                    return $item;
+                }
             }
 
             if ($this->singleField) {
