@@ -93,8 +93,8 @@ class DB {
         } else {
             if (!isset(self::$instances) || !array_key_exists($database, self::$instances) || self::$currentDatabase !== $database) {
                 self::$instances[$database] = self::create(App::environment(Globals::ENV_DATABASE_PROVIDER), $database);
-                self::$currentDatabase = $database;
             }
+            self::$currentDatabase = $database;
             return self::$instances[$database];
         }
     }
