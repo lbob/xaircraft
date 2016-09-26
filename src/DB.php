@@ -274,7 +274,10 @@ class DB {
      */
     public static function disconnect()
     {
-        self::getInstance(self::$currentDatabase)->provider->disconnect();
+        /** @var DB $instance */
+        foreach (self::$instances as $instance) {
+            $instance->disconnect();
+        }
     }
 
     /**

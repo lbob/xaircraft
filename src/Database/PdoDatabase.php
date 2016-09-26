@@ -273,6 +273,7 @@ class PdoDatabase implements Database {
     public function disconnect()
     {
         unset($this->dbh);
+        $this->dbh = null;
     }
 
     /**
