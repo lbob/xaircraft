@@ -274,15 +274,17 @@ class DB {
      */
     public static function disconnect()
     {
-        /** @var DB $instance */
-        foreach (self::$instances as $key => $instance) {
-            if (is_array($instance)) {
-                /** @var DB $item */
-                foreach ($instance as $item) {
-                    $item->provider->disconnect();
+        if (!empty(self::$instances)) {
+            /** @var DB $instance */
+            foreach (self::$instances as $key => $instance) {
+                if (is_array($instance) && !empty($instance)) {
+                    /** @var DB $item */
+                    foreach ($instance as $item) {
+                        $item->provider->disconnect();
+                    }
+                } else {
+                    $instance->provider->disconnect();
                 }
-            } else {
-                $instance->provider->disconnect();
             }
         }
     }
