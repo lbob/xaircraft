@@ -23,6 +23,7 @@ use Xaircraft\Console\Daemon\ScheduleDaemon;
 use Xaircraft\Console\Daemon\ServiceCommand;
 use Xaircraft\Database\Migration\MigrateCommand;
 use Xaircraft\Database\Migration\MigrationCommand;
+use Xaircraft\DB;
 use Xaircraft\DI;
 use Xaircraft\Exception\ConsoleException;
 use Xaircraft\Globals;
@@ -78,6 +79,6 @@ class ConsoleLoader extends AppModule
 
     public function appEnd()
     {
-        // TODO: Implement appEnd() method.
+        DB::disconnect();
     }
 }

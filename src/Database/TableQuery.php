@@ -97,6 +97,8 @@ class TableQuery implements QueryStringBuilder
             $result = $tableQueryExecutor->execute($context);
         }
 
+        DB::disconnect(true);
+
         return $result;
     }
 
