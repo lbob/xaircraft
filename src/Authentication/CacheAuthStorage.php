@@ -9,7 +9,7 @@
 namespace Xaircraft\Authentication;
 
 
-use Xaircraft\Authentication\Contract\CurrentUser;
+use Xaircraft\Authentication\Contract\BaseCurrentUser;
 use Xaircraft\Cache\CacheDriver;
 
 class CacheAuthStorage implements AuthStorage
@@ -26,7 +26,7 @@ class CacheAuthStorage implements AuthStorage
         $this->cacheDriver = $cacheDriver;
     }
 
-    public function set(CurrentUser $user)
+    public function set(BaseCurrentUser $user)
     {
         $this->cacheDriver->put($this->currentUserSessionID, $user, 20);
     }
