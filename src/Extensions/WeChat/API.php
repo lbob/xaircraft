@@ -130,5 +130,10 @@ class API {
      * 获取永久素材文件
      */
     const MEDIA_FOREVER = "https://qyapi.weixin.qq.com/cgi-bin/material/get?access_token={ACCESS_TOKEN}&media_id={media_id}&agentid={AGENTID}";
+    
+    /**
+     * 将userid转为openid
+     */
+    const CONVERT_TO_OPENID = 'https://qyapi.weixin.qq.com/cgi-bin/user/convert_to_openid?access_token={ACCESS_TOKEN}';
 }
 
