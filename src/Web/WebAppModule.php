@@ -13,6 +13,7 @@ use Xaircraft\App;
 use Xaircraft\Authentication\AuthStorage;
 use Xaircraft\Authentication\SessionAuthStorage;
 use Xaircraft\Core\IO\File;
+use Xaircraft\DB;
 use Xaircraft\DI;
 use Xaircraft\Exception\URLRouterException;
 use Xaircraft\Globals;
@@ -98,7 +99,7 @@ class WebAppModule extends AppModule
 
     public function appEnd()
     {
-        // TODO: Implement appEnd() method.
+        DB::disconnect();
     }
 
     private function initHttpModules()

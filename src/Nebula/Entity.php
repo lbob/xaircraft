@@ -47,7 +47,7 @@ class Entity
 
         if ($arg instanceof TableQuery) {
             if (TableQuery::QUERY_SELECT !== $arg->getQueryType()) {
-                throw new EntityException("Must be selection table query.");
+                throw new EntityException("Must be selection table query. [" . $this->schema->getName() . "]");
             }
 
             $this->query = $arg;

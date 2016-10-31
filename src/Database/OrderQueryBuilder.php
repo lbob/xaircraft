@@ -20,7 +20,8 @@ class OrderQueryBuilder
         $statements = array();
 
         foreach ($orders as $item) {
-            $field = FieldInfo::make($item->field)->getName($context);
+            //$field = FieldInfo::make($item->field)->getName($context);
+            $field = $item->field;
             /**
              * @var OrderInfo $item
              */

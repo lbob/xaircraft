@@ -39,6 +39,11 @@ class RouteResult
                 if (!isset($value) && array_key_exists($key, $defaultValues))
                     $params[$key] = $defaultValues[$key];
             }
+            foreach ($defaultValues as $key => $value) {
+                if (false === array_key_exists($key, $params)) {
+                    $params[$key] = $defaultValues[$key];
+                }
+            }
         }
 
         $this->params = array_filter($params, function($var) {return isset($var);});

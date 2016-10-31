@@ -116,7 +116,7 @@ class SelectTableQueryExecutor extends TableQueryExecutor
                 $value = null;
                 if (isset($alias)) {
                     $value = $formatResult[0][$alias];
-                } else if (false !== array_key_exists($field->getField(), $formatResult[0])) {
+                } else {
                     $value = $formatResult[0][$field->getField()];
                 }
                 if (!isset($value)) {

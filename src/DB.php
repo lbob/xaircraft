@@ -272,9 +272,25 @@ class DB {
      * 关闭现有连接
      * @return mixed
      */
-    public static function disconnect()
+    public static function disconnect($isCurrentConnection = false)
     {
-        self::getInstance(self::$currentDatabase)->provider->disconnect();
+        if ($isCurrentConnection) {
+            self::getInstance(self::$currentDatabase)->provider->disconnect();
+        } else {
+            if (!empty(self::$instances)) {
+                /** @var DB $instance */
+                foreach (self::$instances as $key => $instance) {
+                    if (is_array($instance) && !empty($instance)) {
+                        /** @var DB $item */
+                        foreach ($instance as $item) {
+                            $item->provider->disconnect();
+                        }
+                    } else {
+                        $instance->provider->disconnect();
+                    }
+                }
+            }
+        }
     }
 
     /**
