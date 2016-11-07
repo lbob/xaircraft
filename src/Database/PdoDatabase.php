@@ -58,7 +58,7 @@ class PdoDatabase implements Database {
         if (isset($this->dbh)) {
             return $this->dbh;
         } else {
-            throw new DatabaseException($this->dbName, "未初始化数据连接对象。");
+            throw new DatabaseException("未初始化数据连接对象。");
         }
     }
 
