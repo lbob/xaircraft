@@ -65,7 +65,8 @@ class Log
         $logger = new Logger($name);
         $logger->pushHandler(new StreamHandler($path, $level));
         $method = ucfirst(strtolower($levelName));
-        return call_user_func(array($logger, "add$method"), $message, $context);
+        return $logger->addRecord($level, $message, $context);
+        //return call_user_func(array($logger, "add$method"), $message, $context);
     }
 
     private static function getCommonContext()
