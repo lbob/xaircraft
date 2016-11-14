@@ -7,6 +7,7 @@
  */
 
 namespace Xaircraft\Database;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Xaircraft\Exception\DatabaseException;
 use Xaircraft\Nebula\Entity;
 
@@ -58,7 +59,7 @@ class PdoDatabase implements Database {
         if (isset($this->dbh)) {
             return $this->dbh;
         } else {
-            throw new DatabaseException("未初始化数据连接对象。");
+            throw new DatabaseException($this->dbName, new \Exception("未初始化数据连接对象。"));
         }
     }
 
@@ -70,7 +71,9 @@ class PdoDatabase implements Database {
             if (isset($params)) {
                 foreach ($params as $item) {
                     $index = stripos($statement, '?');
-                    $statement = substr($statement, 0, $index) . "'" . $item . "'" . substr($statement, $index + 1, strlen($statement) - $index);
+                    if (is_string($item)) {
+                        $statement = substr($statement, 0, $index) . "'" . $item . "'" . substr($statement, $index + 1, strlen($statement) - $index);
+                    }
                 }
             }
             $this->statements[] = '[' . $time . '] ' . $statement;
@@ -85,7 +88,8 @@ class PdoDatabase implements Database {
                 $stmt = $this->getDriverInstance()->prepare($query);
                 $stmt->execute($params);
                 $this->recordError($stmt, $params);
-                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                return $result;
             } else {
                 throw new DatabaseException("Not SELECT Query.");
             }
@@ -145,7 +149,8 @@ class PdoDatabase implements Database {
     {
         if (is_string($query)) {
             $this->log($query, $params);
-            return $this->getDriverInstance()->exec($query);
+            $result = $this->getDriverInstance()->exec($query);
+            return $result;
         }
         return $this->errorState;
     }
@@ -154,7 +159,8 @@ class PdoDatabase implements Database {
     {
         if (is_string($query)) {
             $this->log($query, $params);
-            return $this->getDriverInstance()->query($query);
+            $result = $this->getDriverInstance()->query($query);
+            return $result;
         }
         return $this->errorState;
     }
@@ -272,8 +278,8 @@ class PdoDatabase implements Database {
      */
     public function disconnect()
     {
-        unset($this->dbh);
         $this->dbh = null;
+        unset($this->dbh);
     }
 
     /**
