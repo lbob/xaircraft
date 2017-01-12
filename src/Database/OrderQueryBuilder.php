@@ -25,7 +25,11 @@ class OrderQueryBuilder
             /**
              * @var OrderInfo $item
              */
-            $statements[] = "$field $item->sort";
+            if ($field instanceof Raw) {
+                $statements[] = $field->getValue() . " $item->sort";
+            } else {
+                $statements[] = "$field $item->sort";
+            }
         }
 
         return implode(',', $statements);
