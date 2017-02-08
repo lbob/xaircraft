@@ -10,6 +10,7 @@
 namespace Xaircraft;
 
 use Monolog\Logger;
+use Xaircraft\Queue\QueueAppModule;
 use Xaircraft\Configuration\Settings;
 use Xaircraft\Console\Console;
 use Xaircraft\Console\ConsoleLoader;
@@ -186,6 +187,7 @@ class App extends Container
         self::module(AppModuleLoader::class);
         self::module(WebAppModule::class);
         self::module(ConsoleLoader::class);
+        self::module(QueueAppModule::class);
     }
 
     private function getEnvironment($key)

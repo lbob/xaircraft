@@ -14,7 +14,7 @@ class TestHttpModule extends \Xaircraft\Web\HttpModule
         /** @var \Xaircraft\Web\Http\Request $request */
         $request = \Xaircraft\DI::get(\Xaircraft\Web\Http\Request::class);
 
-        var_dump($request->param('workspace'));
+        //var_dump($request->param('workspace'));
     }
 
     public function end()

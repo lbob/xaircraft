@@ -16,6 +16,7 @@ use Xaircraft\DI;
 use Xaircraft\Exception\ModelException;
 use Xaircraft\Extensions\Log\Log;
 use Xaircraft\Nebula\Model;
+use Xaircraft\Queue\Queue;
 use Xaircraft\Web\Mvc\Argument\Post;
 use Xaircraft\Web\Mvc\Controller;
 use Xaircraft\Web\Mvc\OutputStatusException;
@@ -33,9 +34,11 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
-    public function test_update_field()
+    public function test_queue()
     {
-        
+        Queue::push(SendEmail::class, array('aaa'));
+        Queue::push(SendEmail::class, array('bbb'));
+        //Queue::rollback();
     }
 
     public function test_field()

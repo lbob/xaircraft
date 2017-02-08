@@ -29,6 +29,7 @@ use Xaircraft\Exception\ConsoleException;
 use Xaircraft\Globals;
 use Xaircraft\Module\AppModule;
 use Xaircraft\Nebula\Console\ModelCommand;
+use Xaircraft\Queue\QueueCommand;
 
 class ConsoleLoader extends AppModule
 {
@@ -51,6 +52,7 @@ class ConsoleLoader extends AppModule
         Command::bind('daemon', DaemonCommand::class);
         Command::bind('service', ServiceCommand::class);
         Command::bind('job', JobCommand::class);
+        Command::bind('queue', QueueCommand::class);
 
         DaemonFactory::bind('idle', IdleDaemon::class);
         DaemonFactory::bind('job', JobDaemon::class);

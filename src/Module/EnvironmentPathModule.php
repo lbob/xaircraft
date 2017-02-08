@@ -26,6 +26,9 @@ class EnvironmentPathModule extends AppModule
         App::path('log', App::path('app') . '/log');
         App::path('async_job', App::path('cache') . '/async_job');
         App::path('http_module', App::path('config') . '/http_module.php');
+        App::path('queue_handle', App::path('config') . '/queue_handle.php');
+        App::path('queue', App::path('config') . '/queue.php');
+        App::path('redis', App::path('config') . '/redis.php');
     }
 
     public function handle()
