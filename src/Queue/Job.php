@@ -28,18 +28,18 @@ class Job
 
     const DEFAULT_FIRE_METHOD = 'fire';
 
-    private function __construct($key, array $params, $cbUrl)
+    private function __construct($key, array $params, $cbUrl, $uid = '')
     {
-        $this->uid = Strings::guid();
+        $this->uid = empty($uid) ? Strings::guid() : $uid;
         $this->key = $key;
         $this->params = $params;
         $this->cbUrl = $cbUrl;
         $this->parseKey();
     }
 
-    public static function create($key, array $params, $cbUrl = '')
+    public static function create($key, array $params, $cbUrl = '', $uid = '')
     {
-        return new Job($key, $params, $cbUrl);
+        return new Job($key, $params, $cbUrl, $uid);
     }
 
     private function parseKey()

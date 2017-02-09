@@ -9,13 +9,14 @@
 namespace Xaircraft\Console;
 
 
+use Carbon\Carbon;
 use Xaircraft\Exception\ConsoleException;
 
 class Console
 {
     public static function line($text)
     {
-        echo $text . chr(10);
+        echo "[" . Carbon::now()->toDateTimeString() . "]" . $text . chr(10);
     }
 
     public static function info($text)

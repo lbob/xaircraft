@@ -52,6 +52,7 @@ class Worker
             if (isset($resolve)) {
                 $resolve($result);
             }
+            BaseQueue::event('onResolved', array($this->job));
         } catch (\Exception $e) {
             //更新任务状态为：异常，并写入异常信息
             //写入异常处理队列
@@ -61,6 +62,7 @@ class Worker
             if (isset($reject)) {
                 $reject($e);
             }
+            BaseQueue::event('onRejected', array($this->job, $e));
         }
 
         $this->onFireAfter();
