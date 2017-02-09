@@ -2,85 +2,58 @@
 /**
  * Created by PhpStorm.
  * User: lbob
- * Date: 2017/2/7
- * Time: 13:35
+ * Date: 2017/2/9
+ * Time: 13:22
  */
 
 namespace Xaircraft\Queue;
 
 
-use Xaircraft\App;
-
-abstract class BaseQueue implements IQueue
+abstract class BaseQueue
 {
-    const MODE_SYNC = 0;
-    const MODE_ASYNC = 1;
+    private $rollback = false;
 
-    protected $queue = array();
+    private $items;
 
-    protected $rollbackHandles = array();
+    public function __construct()
+    {
+        $this->items = array();
+    }
 
-    protected $commitHandles = array();
-
-    protected $isRollback = false;
-
-    public abstract function mode();
-
-    public abstract function push($job, array $params = null, $cbUrl = null);
+    public function push($command, array $params = array())
+    {
+        $this->items[] = new QueueItem($command, $params);
+    }
 
     public abstract function waitPopAll($timeout = 0);
 
-    public abstract function commit();
+    public abstract function onCommit();
 
-    public abstract function rollback();
-
-    public function registerRollbackHandle(callable $handle)
+    public function commit()
     {
-        $this->rollbackHandles[] = $handle;
-    }
-
-    public function registerCommitHandle(callable $handle)
-    {
-        $this->commitHandles[] = $handle;
-    }
-
-    public function onResolved(Job $job)
-    {
-        $config = require App::path('queue_handle');
-        if (!empty($config)) {
-            $fail = $config['resolve'];
-            if (!isset($fail)) {
-                call_user_func($fail, $job);
-            }
+        if (!$this->isRollback()) {
+            $this->onCommit();
         }
     }
 
-    public function onRejected(Job $job)
+    public function rollback()
     {
-        $config = require App::path('queue_handle');
-        if (!empty($config)) {
-            $fail = $config['reject'];
-            if (!isset($fail)) {
-                call_user_func($fail, $job);
-            }
-        }
+        $this->rollback = true;
     }
 
-    public static function event($name, array $params = [], callable $cb = null)
+    /**
+     * @return boolean
+     */
+    public function isRollback()
     {
-        $config = require App::path('queue_handle');
-        if (!empty($config)) {
-            if (array_key_exists($name, $config) !== false) {
-                $handle = $config[$name];
-                if (isset($handle) && is_callable($handle)) {
-                    $result = call_user_func_array($handle, $params);
-                    if (isset($cb) && is_callable($cb)) {
-                        call_user_func($cb, $result);
-                    }
-                    return $result;
-                }
-            }
-        }
-        return null;
+        return $this->rollback;
+    }
+
+    /**
+     * @return array
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 }

@@ -2,79 +2,59 @@
 /**
  * Created by PhpStorm.
  * User: lbob
- * Date: 2017/2/7
- * Time: 11:16
+ * Date: 2017/2/9
+ * Time: 15:20
  */
 
 namespace Xaircraft\Queue;
 
 
-use Predis\Client;
-use Predis\Command\RedisFactory;
-use Redis;
-use Xaircraft\App;
 use Xaircraft\DI;
 use Xaircraft\Exception\ExceptionHelper;
 
 class Worker
 {
-    /**
-     * @var Job
-     */
-    private $job;
+    private $task;
 
-    private function __construct(Job $job)
+    private function __construct(Task $task)
     {
-        $this->job = $job;
+        $this->task = $task;
     }
 
-    public static function create(Job $job)
+    public static function create($command, array $params, $uid = '', $status = TaskContext::STATUS_NOSTART)
     {
-        return new Worker($job);
+        list($name, $method) = self::parseCommand($command);
+        $context = TaskContext::create($name, $method, $params, $status, $uid);
+        $task = Task::create($context);
+
+        return new Worker($task);
     }
 
-    public function run(callable $resolve, callable $reject)
+    public static function createFromTask(Task $task)
     {
-        $this->onFireBefore();
-
-        $className = $this->job->name;
-        $method = $this->job->method;
-        ExceptionHelper::ThrowIfNotTrue(class_exists($className), "Job class [$className] not exists.");
-        ExceptionHelper::ThrowIfNotTrue(method_exists($className, $method), "Job [$className] method [$method] not exists.");
-        $instance = DI::get($className);
-        try {
-            ExceptionHelper::ThrowIfNullOrEmpty($instance, "Job instance null.");
-            $result = $instance->$method($this->job->params);
-            //更新任务状态为：完成，并写入结果
-            if (method_exists($instance, 'onResolved')) {
-                $instance->onResolved($this->job);
-            }
-            if (isset($resolve)) {
-                $resolve($result);
-            }
-            BaseQueue::event('onResolved', array($this->job));
-        } catch (\Exception $e) {
-            //更新任务状态为：异常，并写入异常信息
-            //写入异常处理队列
-            if (method_exists($instance, 'onRejected')) {
-                $instance->onRejected($this->job, $e);
-            }
-            if (isset($reject)) {
-                $reject($e);
-            }
-            BaseQueue::event('onRejected', array($this->job, $e));
-        }
-
-        $this->onFireAfter();
+        return new Worker($task);
     }
 
-    private function onFireBefore()
+    public function run()
     {
-        BaseQueue::event('onFireBefore', array('job' => $this->job));
+        /** @var QueueContext $context */
+        $context = DI::get(QueueContext::class);
+        $context->setCurrentTask($this->task);
+        $this->task->addListener(Task::EVENT_BEFORE, function () use ($context) { QueueEvents::onTaskBeforeFire($context); });
+        $this->task->addListener(Task::EVENT_RESOLVED, function () use ($context) { QueueEvents::onTaskResolved($context); });
+        $this->task->addListener(Task::EVENT_REJECTED, function () use ($context) { QueueEvents::onTaskRejected($context); });
+        $this->task->addListener(Task::EVENT_RESUME, function () use ($context) { QueueEvents::onTaskResume($context); });
+        $this->task->invoke();
     }
 
-    private function onFireAfter()
+    private static function parseCommand($command)
     {
-        BaseQueue::event('onFireAfter', array('job' => $this->job));
+        ExceptionHelper::ThrowIfNullOrEmpty($command, 'Task command cannot be null.');
+        $sections = explode('@', $command);
+        $name = isset($sections[0]) ? $sections[0] : null;
+        $method = isset($sections[1]) ? $sections[1] : 'fire';
+        ExceptionHelper::ThrowIfNullOrEmpty($name, 'Task name cannot be null.');
+
+        return array($name, $method);
     }
 }

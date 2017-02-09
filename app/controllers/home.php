@@ -1,6 +1,4 @@
 <?php
-use Account\User;
-use Location\Polygon;
 use Xaircraft\Async\Job;
 use Xaircraft\Authentication\Auth;
 use Xaircraft\Authentication\Contract\CurrentUser;
@@ -16,8 +14,8 @@ use Xaircraft\DI;
 use Xaircraft\Exception\ModelException;
 use Xaircraft\Extensions\Log\Log;
 use Xaircraft\Nebula\Model;
-use Xaircraft\Queue\Queue;
-use Xaircraft\Web\Mvc\Argument\Post;
+use Xaircraft\Queue\QueueContext;
+use Xaircraft\Queue\TaskQueue;
 use Xaircraft\Web\Mvc\Controller;
 use Xaircraft\Web\Mvc\OutputStatusException;
 
@@ -34,10 +32,23 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
+    public function test_config()
+    {
+        /** @var QueueContext $context */
+        $context = DI::get(QueueContext::class);
+        var_dump($context->getImplement());
+
+        $config = new \Xaircraft\Queue\QueueConfiguration();
+        $result = $config->find('test')->find('aaa')->get();
+        var_dump($result);
+        $result = $config->find('test')->get();
+        var_dump($result);
+    }
+
     public function test_queue()
     {
-        Queue::push(SendEmail::class, array('aaa'));
-        Queue::push(SendEmail::class, array('bbb'));
+        TaskQueue::push(SendEmail::class, array('aaa'));
+        TaskQueue::push(SendEmail::class, array('bbb'));
         //Queue::rollback();
     }
 

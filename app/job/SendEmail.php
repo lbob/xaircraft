@@ -1,6 +1,9 @@
 <?php
+use Xaircraft\Console\Console;
 use Xaircraft\Queue\IJob;
+use Xaircraft\Queue\ITask;
 use Xaircraft\Queue\Job;
+use Xaircraft\Queue\TaskContext;
 
 /**
  * Created by PhpStorm.
@@ -8,21 +11,33 @@ use Xaircraft\Queue\Job;
  * Date: 2017/2/7
  * Time: 16:59
  */
-class SendEmail implements IJob
+class SendEmail implements ITask
 {
-    public function fire(array $params)
+    public function fire(TaskContext $context)
     {
         sleep(5);
-        \Xaircraft\Extensions\Log\Log::debug('QUEUE_JOB', 'SendEmail', $params);
+        //throw new \Xaircraft\Exception\ModelException('aaadddfff');
+        \Xaircraft\Extensions\Log\Log::debug('QUEUE_TASK', 'SendEmail', $context->getParams());
     }
 
-    public function onResolved(Job $job)
+    public function onBefore(TaskContext $context)
     {
-        \Xaircraft\Extensions\Log\Log::debug('IJOB.ONRESOLVED', $job->uid);
+        Console::line('TASK.onBefore: ' . $context->getUid());
     }
 
-    public function onRejected(Job $job, \Exception $ex = null)
+    public function onResolved(TaskContext $context)
     {
-        \Xaircraft\Extensions\Log\Log::debug('IJOB.ONREJECTED', $job->uid);
+        Console::line('TASK.onResolved: ' . $context->getUid());
+    }
+
+    public function onRejected(TaskContext $context)
+    {
+        Console::line('TASK.onRejected: ' . $context->getUid());
+    }
+
+    public function onResume(TaskContext $context)
+    {
+        Console::line('TASK.onResume: ' . $context->getUid());
+        return false;
     }
 }

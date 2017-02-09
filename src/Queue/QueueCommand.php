@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: lbob
- * Date: 2017/2/7
- * Time: 19:14
+ * Date: 2017/2/9
+ * Time: 19:24
  */
 
 namespace Xaircraft\Queue;
@@ -12,55 +12,36 @@ namespace Xaircraft\Queue;
 use Xaircraft\Console\Command;
 use Xaircraft\Console\Console;
 use Xaircraft\DI;
-use Xaircraft\Extensions\Log\Log;
 
 class QueueCommand extends Command
 {
 
     public function handle()
     {
-        /** @var IQueue $queue */
-        $queue = DI::get(IQueue::class);
-        if ($queue->mode() === BaseQueue::MODE_SYNC) {
-            Console::line('Queue run mode is SYNC.');
-            return;
-        }
+        /** @var QueueContext $context */
+        $context = DI::get(QueueContext::class);
+        QueueEvents::onStart($context);
+        QueueEvents::onResumed($context);
 
-        $recovers = BaseQueue::event('onRecover');
-        if (!empty($recovers)) {
-            foreach ($recovers as $recover) {
-                if (isset($recover) && $recover instanceof Job) {
-                    $worker = Worker::create($recover);
-                    if (isset($worker)) {
-                        $worker->run(function ($res) {
-                            Console::line('Recover Job run success. RESULT: ' . $res);
-                            Log::info('QUEUE_STATUS', 'Recover Job run success. RESULT: ' . $res);
-                        }, function (\Exception $ex) {
-                            Console::line('Recover Job run fail. RESULT: ' . $ex->getMessage());
-                            Log::info('QUEUE_STATUS', 'Recover Job run fail. RESULT: ' . $ex->getMessage());
-                        });
-                    }
-                }
+        $resumes = $context->getResumeTasks();
+        if (!empty($resumes)) {
+            foreach ($resumes as $resume) {
+                $resume->getContext()->setResume(true);
+                $worker = Worker::createFromTask($resume);
+                $worker->run();
             }
         }
 
-        /** @var Job $item */
-        foreach ($queue->waitPopAll(30) as $item) {
+        /** @var QueueItem $item */
+        foreach (TaskQueue::waitPopAll(10) as $item) {
             if (isset($item)) {
-                $worker = Worker::create($item);
-                if (isset($worker)) {
-                    $worker->run(function ($res) {
-                        Console::line('Job run success. RESULT: ' . $res);
-                        Log::info('QUEUE_STATUS', 'Job run success. RESULT: ' . $res);
-                    }, function (\Exception $ex) {
-                        Console::line('Job run fail. RESULT: ' . $ex->getMessage());
-                        Log::info('QUEUE_STATUS', 'Job run fail. RESULT: ' . $ex->getMessage());
-                    });
-                }
+                $worker = Worker::create($item->command, $item->params);
+                $worker->run();
             } else {
-                Console::line('Job is empty. ');
-                Log::info('QUEUE_STATUS', 'Job is empty. ');
+                Console::line("Task Queue empty.");
             }
         }
+
+        QueueEvents::onStop($context);
     }
 }
