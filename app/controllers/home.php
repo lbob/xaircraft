@@ -32,6 +32,12 @@ class home_controller extends Controller implements OutputStatusException
         DB::database('agri_data_center');
     }
 
+    public function test_func()
+    {
+        $sql = DB::table('user')->pluck(Func::count('*'))->getQueryString();
+        var_dump($sql);
+    }
+
     public function test_config()
     {
         /** @var QueueContext $context */

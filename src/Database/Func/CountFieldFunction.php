@@ -18,8 +18,13 @@ class CountFieldFunction extends FieldFunction
     public function getString(QueryContext $context)
     {
         if ("*" !== $this->field) {
-            $field = $context->makeFieldInfo($this->field);
-            return "COUNT(" . $field->getName($context) . ")";
+            if ($this->field instanceof FieldFunction) {
+                $field = $this->field->getString($context);
+                return "COUNT(" . $field . ")";
+            } else {
+                $field = $context->makeFieldInfo($this->field);
+                return "COUNT(" . $field->getName($context) . ")";
+            }
         }
         return "COUNT(*)";
     }
