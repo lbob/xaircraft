@@ -99,7 +99,7 @@ class WebAppModule extends AppModule
 
     public function appEnd()
     {
-        DB::disconnect();
+        //DB::disconnect();
     }
 
     private function initHttpModules()

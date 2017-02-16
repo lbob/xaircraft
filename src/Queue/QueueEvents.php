@@ -1,6 +1,7 @@
 <?php
 
 namespace Xaircraft\Queue;
+use Xaircraft\Console\Console;
 
 /**
  * Created by PhpStorm.
@@ -59,12 +60,27 @@ class QueueEvents
         self::emit(self::EVENT_ONTASKRESUME, $context);
     }
 
+    const EVENT_ONERROR = 'onError';
+
+    public static function onError(QueueContext $context, \Exception $ex)
+    {
+        self::emit(self::EVENT_ONERROR, $context);
+    }
+
     private static function emit($eventname, QueueContext $context)
     {
         $event = $context->getConfig()->find('event')->find($eventname)->get();
 
         if (is_callable($event)) {
-            call_user_func($event, $context);
+            try {
+                call_user_func($event, $context);
+            } catch (\Exception $ex) {
+                if ($eventname !== self::EVENT_ONERROR) {
+                    self::onError($context, $ex);
+                } else {
+                    throw $ex;
+                }
+            }
         }
     }
 }
