@@ -33,6 +33,7 @@ abstract class BaseQueue
     {
         if (!$this->isRollback()) {
             $this->onCommit();
+            $this->items = array();
         }
     }
 
