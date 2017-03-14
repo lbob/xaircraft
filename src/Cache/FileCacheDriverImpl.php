@@ -73,7 +73,9 @@ class FileCacheDriverImpl implements CacheDriver {
     private function delete($key)
     {
         $path = $this->getPath($key);
-        unlink($path);
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     /**
