@@ -28,6 +28,19 @@ class Entity
     private $query;
 
     private $updates = array();
+
+    /**
+     * 不进行更新的字段
+     * @var array
+     */
+    private $forgets = array();
+
+    /**
+     * 强制更新的字段，即使字段值没有更新
+     * @var array
+     */
+    private $forces = array();
+
     /**
      * @var \Xaircraft\Database\TableSchema
      */
@@ -63,6 +76,16 @@ class Entity
     {
         $this->parseUpdateFields($fields);
 
+        if (!empty($this->forgets)) {
+            $updates = $this->updates;
+            foreach ($this->updates as $key => $value) {
+                if (array_search($key, $this->forgets) !== false) {
+                    unset($updates[$key]);
+                }
+            }
+            $this->updates = $updates;
+        }
+
         if (empty($this->updates)) {
             return true;
         }
@@ -90,6 +113,16 @@ class Entity
         return Generic::array_key_filter($this->fields, $fieldFilter, true);
     }
 
+    public function forget($field)
+    {
+        $this->forgets[] = $field;
+    }
+
+    public function force($field)
+    {
+        $this->forces[] = $field;
+    }
+
     public function isExists()
     {
         return $this->exists;
@@ -115,7 +148,8 @@ class Entity
             throw new EntityException("Can't find field [$field] in table [" . $this->schema->getName());
         }
 
-        if ($value !== $this->shadows[$field]) {
+        $forces = $this->forces;
+        if ($value !== $this->shadows[$field] || (!empty($forces) && array_search($field, $forces) !== false)) {
             if ($this->autoIncrementField === $field) {
                 if (!$this->exists) {
                     if (DB::table($this->schema->getName())->where($field, $value)->count()->execute() > 0) {
