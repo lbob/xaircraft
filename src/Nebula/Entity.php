@@ -11,6 +11,7 @@ namespace Xaircraft\Nebula;
 
 use Xaircraft\Core\Collections\Generic;
 use Xaircraft\Database\TableQuery;
+use Xaircraft\Database\TableSchema;
 use Xaircraft\DB;
 use Xaircraft\Exception\EntityException;
 
@@ -91,6 +92,10 @@ class Entity
         }
 
         if ($this->exists) {
+            if ($this->schema->existsField(TableSchema::RESERVED_FIELD_UPDATE_AT) &&
+                !array_key_exists(TableSchema::RESERVED_FIELD_UPDATE_AT, $this->updates)) {
+                $this->updates[TableSchema::RESERVED_FIELD_UPDATE_AT] = time();
+            }
             $result = DB::table($this->schema->getName())
                 ->where(
                     $this->schema->getAutoIncrementField(),
@@ -99,6 +104,14 @@ class Entity
             $this->updates = array();
             return $result;
         } else {
+            if ($this->schema->existsField(TableSchema::RESERVED_FIELD_CREATE_AT) &&
+                !array_key_exists(TableSchema::RESERVED_FIELD_CREATE_AT, $this->updates)) {
+                $this->updates[TableSchema::RESERVED_FIELD_CREATE_AT] = time();
+            }
+            if ($this->schema->existsField(TableSchema::RESERVED_FIELD_UPDATE_AT) &&
+                !array_key_exists(TableSchema::RESERVED_FIELD_UPDATE_AT, $this->updates)) {
+                $this->updates[TableSchema::RESERVED_FIELD_UPDATE_AT] = time();
+            }
             $id = DB::table($this->schema->getName())->insertGetId($this->updates)->execute();
             if ($id > 0) {
                 $this->setField($this->schema->getAutoIncrementField(), $id);
