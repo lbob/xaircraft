@@ -94,7 +94,9 @@ class Entity
         if ($this->exists) {
             if ($this->schema->existsField(TableSchema::RESERVED_FIELD_UPDATE_AT) &&
                 !array_key_exists(TableSchema::RESERVED_FIELD_UPDATE_AT, $this->updates)) {
-                $this->updates[TableSchema::RESERVED_FIELD_UPDATE_AT] = time();
+                $updateAt = time();
+                $this->updates[TableSchema::RESERVED_FIELD_UPDATE_AT] = $updateAt;
+                $this->fields[TableSchema::RESERVED_FIELD_UPDATE_AT] = $updateAt;
             }
             $result = DB::table($this->schema->getName())
                 ->where(
@@ -104,13 +106,16 @@ class Entity
             $this->updates = array();
             return $result;
         } else {
+            $updateAt = time();
             if ($this->schema->existsField(TableSchema::RESERVED_FIELD_CREATE_AT) &&
                 !array_key_exists(TableSchema::RESERVED_FIELD_CREATE_AT, $this->updates)) {
                 $this->updates[TableSchema::RESERVED_FIELD_CREATE_AT] = time();
+                $this->fields[TableSchema::RESERVED_FIELD_CREATE_AT] = $updateAt;
             }
             if ($this->schema->existsField(TableSchema::RESERVED_FIELD_UPDATE_AT) &&
                 !array_key_exists(TableSchema::RESERVED_FIELD_UPDATE_AT, $this->updates)) {
                 $this->updates[TableSchema::RESERVED_FIELD_UPDATE_AT] = time();
+                $this->fields[TableSchema::RESERVED_FIELD_UPDATE_AT] = $updateAt;
             }
             $id = DB::table($this->schema->getName())->insertGetId($this->updates)->execute();
             if ($id > 0) {
