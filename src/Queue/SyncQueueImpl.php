@@ -23,7 +23,7 @@ class SyncQueueImpl extends BaseQueue
         /** @var QueueContext $context */
         $context = DI::get(QueueContext::class);
         QueueEvents::onStart($context);
-        QueueEvents::onResumed($context);
+        //QueueEvents::onResumed($context);
         if (!empty($this->getItems())) {
             /** @var QueueItem $item */
             foreach ($this->getItems() as $item) {
