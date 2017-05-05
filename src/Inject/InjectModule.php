@@ -10,6 +10,8 @@ namespace Xaircraft\Inject;
 
 
 use Xaircraft\Configuration\Settings;
+use Xaircraft\Database\TableSchemaContainer;
+use Xaircraft\DI;
 use Xaircraft\Module\AppModule;
 
 class InjectModule extends AppModule
@@ -18,6 +20,8 @@ class InjectModule extends AppModule
     public function appStart()
     {
         Settings::load('inject');
+
+        DI::bindSingleton(TableSchemaContainer::class, new TableSchemaContainer());
     }
 
     public function handle()

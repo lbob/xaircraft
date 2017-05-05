@@ -68,7 +68,9 @@ class TableQuery implements QueryStringBuilder
 
     public function __construct($table)
     {
-        $this->schema = new TableSchema($table);
+        /** @var TableSchemaContainer $schemaContainer */
+        $schemaContainer = DI::get(TableSchemaContainer::class);
+        $this->schema = $schemaContainer->get($table);
     }
 
     public function getTableName()

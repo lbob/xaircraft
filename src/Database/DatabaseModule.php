@@ -9,6 +9,7 @@
 namespace Xaircraft\Database;
 
 
+use Xaircraft\DI;
 use Xaircraft\Module\AppModule;
 
 class DatabaseModule extends AppModule

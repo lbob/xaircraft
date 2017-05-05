@@ -35,7 +35,13 @@ class home_controller extends Controller implements OutputStatusException
     public function test_func()
     {
         $sql = DB::table('user')->pluck(Func::count('*'))->getQueryString();
-        var_dump($sql);
+        echo($sql . "<br />");
+        $sql = DB::table('user')->pluck(Func::count('*'))->getQueryString();
+        echo($sql . "<br />");
+        $sql = DB::table('product')->pluck(Func::count('*'))->getQueryString();
+        echo($sql . "<br />");
+        $sql = DB::table('product')->pluck(Func::count('*'))->getQueryString();
+        echo($sql . "<br />");
     }
 
     public function test_config()
