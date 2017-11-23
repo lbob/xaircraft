@@ -57,6 +57,9 @@ class PdoDatabase implements Database {
     private function getDriverInstance()
     {
         if (isset($this->dbh)) {
+            if ($this->dbh->errorCode() == '2006') {
+                $this->connection();
+            }
             return $this->dbh;
         } else {
             throw new DatabaseException($this->dbName, new \Exception("未初始化数据连接对象。"));
