@@ -11,9 +11,7 @@
   "minimum-stability": "dev",
   "require": {
     "php": ">=5.3.0",
-    "predis/predis": "*"
-  },
-  "require-dev": {
+    "predis/predis": "*",
     "monolog/monolog": "1.*",
     "nesbot/Carbon": "*"
   },
