@@ -11,6 +11,7 @@ namespace Xaircraft;
 
 class Globals
 {
+    const VERSION = "1.2";
     const PI = 3.1415926;
     const EARTH_RADIUS = 6371393;
 
