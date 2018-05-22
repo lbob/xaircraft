@@ -33,7 +33,7 @@ class Strings
     public static function guid($withHyphen = false)
     {
         $charid = strtoupper(md5(uniqid(mt_rand(), true)));
-        if (!$withHyphen) {
+        if ($withHyphen) {
             $hyphen = chr(45);// "-"
         } else {
             $hyphen = "";
