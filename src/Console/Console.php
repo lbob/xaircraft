@@ -20,27 +20,27 @@ class Console
     public static function line($text)
     {
         if (self::isCliMode()) {
-            Log::info("Console", "[" . Carbon::now()->toDateTimeString() . "]" . $text);
-        } else {
             echo "[" . Carbon::now()->toDateTimeString() . "]" . $text . chr(10);
+        } else {
+            Log::info("Console", "[" . Carbon::now()->toDateTimeString() . "]" . $text);
         }
     }
 
     public static function info($text)
     {
         if (self::isCliMode()) {
-            Log::info("Console", $text);
-        } else {
             echo $text;
+        } else {
+            Log::info("Console", $text);
         }
     }
 
     public static function error($text)
     {
         if (self::isCliMode()) {
-            Log::info("Console", self::format($text, 'FAILURE'));
-        } else {
             echo self::format($text, 'FAILURE');
+        } else {
+            Log::info("Console", self::format($text, 'FAILURE'));
         }
     }
 
