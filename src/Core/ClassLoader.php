@@ -59,7 +59,7 @@ class ClassLoader extends Container
             $path = null;
             // Controller
             if (strpos($className, "_controller") > 0) {
-                $path = $this->getControllerPath(strtolower($className));
+                $path = self::getControllerPath(strtolower($className));
             }
             if (is_file($path) && is_readable($path)) {
                 require_once $path;
@@ -76,14 +76,21 @@ class ClassLoader extends Container
 
     private function checkBlackList($className)
     {
-        return array_search($className, $this->blackList) !== false;
+        return false;
+        //return array_search($className, $this->blackList) !== false;
     }
 
-    private function getControllerPath($className)
+    private static function getControllerPath($className)
     {
         $className = substr($className, 0, strpos($className, "_controller"));
         $className = str_replace('_', DIRECTORY_SEPARATOR, $className);
         return App::path("app") . '/controllers/' . $className . '.php';
+    }
+
+    public static function isControllerExists($controller)
+    {
+        $path = self::getControllerPath($controller);
+        return is_file($path) && is_readable($path);
     }
 
     private function scan($className)
