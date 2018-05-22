@@ -46,7 +46,7 @@ class FileCacheDriverImpl implements CacheDriver {
         $path = $this->getPath($value->key);
 
         if (file_exists($path)) {
-            unlink($path);
+            @unlink($path);
         }
         file_put_contents($path, serialize($value), LOCK_EX);
     }
