@@ -31,6 +31,10 @@ class Func
         return new SumFieldFunction($field);
     }
 
+    public static function groupConcat($field)
+    {
+        return new GroupConcatFieldFunction($field);
+    }
     public static function convert($field, $type)
     {
         return new ConvertFieldFunction($field, $type);
@@ -54,5 +58,10 @@ class Func
     public static function min($field)
     {
         return new MinFieldFunction($field);
+    }
+
+    public static function fromUnixTime($field, $format = null)
+    {
+        return new FromUnixTimeFieldFunction($field, $format);
     }
 }
